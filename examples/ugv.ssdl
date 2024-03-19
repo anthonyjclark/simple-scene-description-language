@@ -1,0 +1,54 @@
+// https://github.com/anthonyjclark/adabot/blob/master/adabot_description/urdf/adabot.parameters.xacro
+
+//
+// Name
+//
+
+robot UGV
+
+//
+// Constants
+//
+
+let material_density =  0.940 g/cm^3
+
+let chassis_length = 10 cm
+let chassis_width = 16 cm
+let chassis_height = 4 cm
+
+let chassis_mass = chassis_length * chassis_width * chassis_height * material_density
+
+let wheel_radius = 2 cm
+let wheel_thickness = 1 cm
+
+
+//
+// Components (bodies and joints)
+//
+
+chassis = Box {
+    size = chassis_length, chassis_width, chassis_height
+}
+
+macro Wheel(reflect_fr, reflect_lr) {
+    self.body = Cylinder {
+        length = wheel_thickness
+        radius = 4
+        rotation = pi/2, 0, 0
+    }
+
+    self.joint = Revolute {
+        parent = chassis
+        child = self.body
+        position =
+            chassis_length / 2 * reflect_fr,
+            (wheel_thickness + chassis_width) / 2 * reflect_lr,
+            0
+        axis = 0, 1, 0
+    }
+}
+
+front_left_wheel = Wheel(1, -1)
+front_right_wheel = Wheel(1, 1)
+rear_left_wheel = Wheel(-1, -1)
+rear_right_wheel = Wheel(-1, 1)

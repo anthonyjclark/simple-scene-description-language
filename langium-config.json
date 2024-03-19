@@ -1,0 +1,15 @@
+{
+    "projectName": "Ssdl",
+    "languages": [{
+        "id": "ssdl",
+        "grammar": "src/language/ssdl.langium",
+        "fileExtensions": [".ssdl"],
+        "textMate": {
+            "out": "syntaxes/ssdl.tmLanguage.json"
+        },
+        "monarch": {
+            "out": "syntaxes/ssdl.monarch.ts"
+        }
+    }],
+    "out": "src/language/generated"
+}
