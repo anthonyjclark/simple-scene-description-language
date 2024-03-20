@@ -1,0 +1,19 @@
+.half {
+  display: flex;
+  width: 40vw;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+#monaco-editor-root {
+  flex-grow: 1;
+}
+
+#status-msg {
+  color: red;
+}
