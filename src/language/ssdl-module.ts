@@ -59,5 +59,10 @@ export function createSsdlServices(context: DefaultSharedModuleContext): {
     );
     shared.ServiceRegistry.register(Ssdl);
     registerValidationChecks(Ssdl);
+    if (!context.connection) {
+        // We don't run inside a language server
+        // Therefore, initialize the configuration provider instantly
+        shared.workspace.ConfigurationProvider.initialized({});
+    }
     return { shared, Ssdl };
 }

@@ -1,5 +1,67 @@
 # Simple Scene Description Language
 
+## Development
+
+### Start-Up
+
+1. Have a node environment with version 16 or higher
+2. Install `yo` and `generator-langium` globally
+
+    ```bash
+    npm install --global yo generator-langium
+    ```
+
+3. Scaffold a Langium project
+
+    ```bash
+    yo langium
+    # Yes to running inside VSCode
+    # Yes to adding a CLI
+    # Yes to creating a web worker
+    # Yes to setting up tests using Vitest
+    ```
+
+### Workflow
+
+1. Update the grammar
+    - Update `src/language/ssdl.langium`
+2. Generate the AST
+    - Run `npm run langium:generate`
+    - This will create files in `src/generated`
+3. Resolve cross-references
+    - This may not be necessary for this project
+4. Create validations
+    - Update `src/language/ssdl-validator.ts`
+    - Create validation rules for semantic errors
+5. Create code generation
+    - Update `src/cli/generator.ts`
+    - Run `npm run langium:generate`
+    - Run `npm run build`
+6. Customize the CLI
+    - Update `src/cli/main.ts`
+    - (If needed) `chmod +x ./bin/cli.js`
+    - Run `./bin/cli COMMAND [FILE]`
+7. Customizing the web worker
+    - Update `src/language/main-browser.ts`
+    - ?Run `npm run build:web`
+8. Customizing the VSCode extension
+    - ?Run `npm run vscode:prepublish` (template does not match documentation)
+    - ?Run `vsce package`
+    - ?Install the package in VSCode
+
+run tests?
+documentation?
+
+
+
+
+
+
+
+
+
+
+
 ## TODO
 
 - Add mathjs
