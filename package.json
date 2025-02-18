@@ -13,7 +13,7 @@
         "langium:watch": "langium generate --watch",
         "vscode:prepublish": "npm run build && npm run lint",
         "build:web": "npm run build",
-        "bundle": "vite build --outDir ./docs",
+        "bundle": "vite build --outDir ./docs --base ./",
         "bundle:serve": "http-server ./docs --port 5175",
         "dev": "vite",
         "dev:debug": "vite --debug --force",
