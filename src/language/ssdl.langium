@@ -98,7 +98,7 @@ fragment BodyAttributes:
     ('position' '=' position=Vector3)?
     ('rotation' '=' rotation=Vector3)?;
 
-// TODO: others? universtal?
+// TODO: others? universal?
 // TODO: limit is required for revolute and prismatic
 Joint:
     Name '=' jtype=(Revolute | Prismatic | Fixed);

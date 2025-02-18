@@ -23,6 +23,8 @@
 
 ### Workflow
 
+First install dependencies (if cloning): `npm install`
+
 1. Update the grammar
     - Update `src/language/ssdl.langium`
 2. Generate the AST
@@ -40,10 +42,12 @@
 6. Customize the CLI
     - Update `src/cli/main.ts`
     - (If needed) `chmod +x ./bin/cli.js`
-    - Run `./bin/cli COMMAND [FILE]`
+    - Run `./bin/cli COMMAND [FILE] [OPTIONS]`
+    - Example: `./bin/cli.js generateURDF examples/box.ssdl --destination examples/`
 7. Customizing the web worker
     - Update `src/language/main-browser.ts`
-    - ?Run `npm run build:web`
+    - Run `npm run build`
+    - Run `npm run dev`
 8. Customizing the VSCode extension
     - ?Run `npm run vscode:prepublish` (template does not match documentation)
     - ?Run `vsce package`
@@ -51,6 +55,7 @@
 
 run tests?
 documentation?
+build for web: `npm run bundle`
 
 
 
