@@ -1,3 +1,3 @@
-robot box
+name box
 
 b = Box {}

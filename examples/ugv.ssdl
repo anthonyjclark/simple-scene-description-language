@@ -1,13 +1,17 @@
 // https://github.com/anthonyjclark/adabot/blob/master/adabot_description/urdf/adabot.parameters.xacro
 
-//
-// Name
-//
-
-robot UGV
 
 //
-// Constants
+// Name and configuration
+//
+
+name UGV
+
+set visual_scale = 30
+set snap_to_ground = true
+
+//
+// Constant definitions
 //
 
 let material_density =  0.940 g/cm^3
@@ -16,36 +20,64 @@ let chassis_length = 10 cm
 let chassis_width = 16 cm
 let chassis_height = 4 cm
 
+// TODO: unused
 let chassis_mass = chassis_length * chassis_width * chassis_height * material_density
 
-let wheel_radius = 2 cm
+let wheel_radius = 2.5 cm
 let wheel_thickness = 1 cm
 
+let extension_length = wheel_radius / 3
+let extension_width = wheel_thickness
+let extension_thickness = wheel_thickness
+
+let num_extensions = 3
+let extension_radial_offset = wheel_radius / 1.2
+let extension_angle_offset = 20 deg
 
 //
-// Components (bodies and joints)
+// Macro definitions
 //
 
-chassis = Box {
-    size = chassis_length, chassis_width, chassis_height
+macro Extension(parentWheel) {
+    body = Box {
+        size = extension_length, extension_width, extension_thickness
+    }
+
+    joint = Revolute {
+        parent = parentWheel
+        child = body
+    }
 }
 
 macro Wheel(reflect_fr, reflect_lr) {
-    self.body = Cylinder {
+    body = Cylinder {
         length = wheel_thickness
-        radius = 4
+        radius = wheel_radius
         rotation = pi/2, 0, 0
     }
 
-    self.joint = Revolute {
+    joint = Revolute {
         parent = chassis
-        child = self.body
+        child = body
         position =
             chassis_length / 2 * reflect_fr,
             (wheel_thickness + chassis_width) / 2 * reflect_lr,
             0
         axis = 0, 1, 0
     }
+
+
+    for i in 3 {
+        extension = Extension(body)
+    }
+}
+
+//
+// Links and joints
+//
+
+chassis = Box {
+    size = chassis_length, chassis_width, chassis_height
 }
 
 front_left_wheel = Wheel(1, -1)
