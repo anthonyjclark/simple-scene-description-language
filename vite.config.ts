@@ -12,6 +12,7 @@ export default defineConfig(() => {
                     index: path.resolve(__dirname, 'index.html'),
                     monacoClassic: path.resolve(__dirname, 'static/monacoClassic.html'),
                     monacoExtended: path.resolve(__dirname, 'static/monacoExtended.html'),
+                    monacoExtendedVis: path.resolve(__dirname, 'static/monacoExtendedWithUrdfLoader.html'),
                 }
             }
         },
