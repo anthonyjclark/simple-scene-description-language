@@ -9,6 +9,7 @@
   - need ability to create a new name programmatically
   - scope is broken (does not go into function calls correctly; only global and local there)
 
+- let user adjust joint angles (robot.setJointValue(...))
 - allow anonymous (automatically labled items) with '_'
 - add colors
 - disallow multiple definitions of the same name
