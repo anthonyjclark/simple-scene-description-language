@@ -2,15 +2,27 @@
 
 ## TODO
 
-- Add mathjs
-- Test browser version
-- Add an icon
-- Build app with [urdf-loader](https://gkjohnson.github.io/urdf-loaders/javascript/)
-- Add an icon to the package.json file: "icon": "icon.png",
-- Extend existing object using 'with' keyword
-- Add including files
+- working on:
+  - names inside scopes (e.g., joint a link names need to automatically get their parent name)
+  - previously, this was handled manually using `self.`
+  - extension is broken
+  - need ability to create a new name programmatically
+  - scope is broken (does not go into function calls correctly; only global and local there)
+
+- allow anonymous (automatically labled items) with '_'
+- add colors
+- disallow multiple definitions of the same name
+- fix output spacing (two spaces for first indentation instead of tab?)
+- change to kebab-case from snake_case
+- add an icon
+- add an icon to the package.json file: "icon": "icon.png",
+- extend existing object using 'with' keyword
+- add including files
 - run tests?
 - documentation?
+- add light and dark modes (both text and visualization)
+- setup formatting
+- visualize joints
 
 ## Development
 
@@ -33,6 +45,14 @@
     # Yes to setting up tests using Vitest
     ```
 
+4. Install dependencies
+
+    ```bash
+    npm install --save three
+    npm install --save-dev @types/three
+    npm install --save urdf-loader
+    ```
+
 ### Workflow
 
 First install dependencies (if cloning): `npm install`
@@ -44,21 +64,24 @@ First install dependencies (if cloning): `npm install`
     - This will create files in `src/generated`
 3. Resolve cross-references
     - This may not be necessary for this project
-4. Create validations
+4. Update validations
     - Update `src/language/ssdl-validator.ts`
     - Create validation rules for semantic errors
-5. Create code generation
+5. Update code generation
     - Update `src/cli/generator.ts`
     - Run `npm run langium:generate`
     - Run `npm run build`
 6. Update and run the CLI
     - Update `src/cli/main.ts`
+    - Run `npm run build`
     - (If needed) `chmod +x ./bin/cli.js`
     - Run `./bin/cli COMMAND [FILE] [OPTIONS]`
     - Example: `./bin/cli.js generateURDF examples/box.ssdl --destination examples/`
 7. Develop the web version
-    - Update `src/language/main-browser.ts`
-    - Run `npm run build`
+    - Update `src/language/main-browser.ts` (send information to worker)
+    - Update `src/setupExtended.ts` (handle URDF viewing)
+    - Update `static/monacoExtendedWithUrdfLoader.html` (handle website)
+    - Run `npm run build` (not needed?)
     - Run `npm run dev`
 8. Deploy and test the web version
     - Run `npm run bundle`
@@ -69,7 +92,6 @@ First install dependencies (if cloning): `npm install`
     - ?Run `vsce package`
     - ?Install the package in VSCode
     - ?Right-click and install package (same for reinstall)
-
 
 ## Testing Output
 
@@ -91,3 +113,16 @@ First install dependencies (if cloning): `npm install`
   - [USD (Universal Scene Description)](https://openusd.org/release/index.html)
   - OpenSim format
   - MSC Adams (Automatic Dynamic Analysis of Mechanical Systems) (`.adm`)
+
+## Development Notes
+
+### Coordinate Systems
+
+| axis | three.js        | RotX  | ROS (body) | ROS (geo) | ROS (rpy) |
+| ---- | --------------- | ----- | ---------- | --------- | --------- |
+| x    | right   (red)   | right | forward    | east      | roll      |
+| y    | up      (green) |       | left       | north     | pitch     |
+| z    | forward (blue)  |       | up         | up        | yaw       |
+
+- [three.js](https://discoverthreejs.com/book/first-steps/transformations/#coordinate-systems-world-space-and-local-space)
+- [ROS](https://www.ros.org/reps/rep-0103.html#id19)

@@ -12,7 +12,13 @@ grammar Ssdl
 
 
 entry Robot:
-    'robot' name=ID (definitions+=Definition | statements+=Statement)*;
+    'name' name=ID (configurations+=Configurations)* (definitions+=Definition | statements+=Statement)*;
+
+// TODO:
+// - default units?
+Configurations:
+    'set' ( name='visual_scale'   '=' value=NUMBER
+          | name='snap_to_ground' '=' value=('true' | 'false'));
 
 // ----------------------------------------------------------------
 // ▗▄▄         ▄▄   █         █         █
@@ -38,6 +44,7 @@ ConstantDef:
 MacroDef:
     'macro' name=ID '(' MacroParameters ')' Block;
 
+// Change parameter to name=ID?
 fragment MacroParameters:
     (parameters+=Parameter (',' parameters+=Parameter)*)?;
 
@@ -45,7 +52,7 @@ Parameter:
     name=ID;
 
 fragment Block:
-    '{' body+=Statement* '}';
+    '{' (definitions+=Definition | statements+=Statement)* '}';
 
 // ----------------------------------------------------------------
 //  ▗▄▖
@@ -70,7 +77,7 @@ Body:
     Name '=' shape=(Box | Cylinder | Sphere);
 
 fragment Name:
-    (name=ID) | (self='self' '.' name=ID);
+    (name=ID);//| (self='self' '.' name=ID);
 
 // TODO: make size required as in URDF? or optional
 Box:
@@ -128,7 +135,7 @@ fragment JointAttributes:
     ('upperAngleLimit' '=' upperAngleLimit=Expression)?;
 
 NameLabel:
-    (name=ID) | (self='self' '.' name=ID);
+    (name=ID);//| (self='self' '.' name=ID);
 
 // TODO: require named arguments?
 MacroCall:
@@ -136,8 +143,10 @@ MacroCall:
     macro=[MacroDef:ID]
     '(' (arguments+=Expression (',' arguments+=Expression)*)? ')';
 
+// TODO: change to 'loop' with ability to act as while or for loop?
 ForLoop:
-    'for' var=Parameter 'in' start=Expression 'to' end=Expression Block;
+    // 'for' var=Parameter 'in' start=Expression 'to' end=Expression Block;
+    'for' var=ID 'in' range=Expression Block;
 
 // ----------------------------------------------------------------
 // ▗▄▄▄▖                                █
@@ -164,13 +173,28 @@ Multiplication infers Expression:
 Atomic infers Expression:
     {infer Parenthesized} '(' expression=Expression ')' |
     {infer NumberLiteral} value=NUMBER units=Units? |
-    {infer ValueReference} name=ID;
+    // {infer LengthLiteral} value=NUMBER units=LengthUnits? |
+    {infer ValueReference} name=ID |
+    {infer FunctionCall} function=ID '(' argument=Expression ')';
 
 Vector3:
     a=Expression ',' b=Expression ',' c=Expression;
 
+// A good resource for units: https://numbat.dev/doc/list-units.html
 Units returns string:
-    'm' | 'cm' | 'mm' | 'rad' | 'deg' | 'g/cm^3';
+    LengthUnits | AngleUnits | MassUnits | DensityUnits;
+
+LengthUnits returns string:
+    'm' | 'cm' | 'mm';
+
+AngleUnits returns string:
+    'rad' | 'deg';
+
+MassUnits returns string:
+    'g' | 'kg';
+
+DensityUnits returns string:
+    'g/cm^3' | 'kg/m^3';
 
 // ----------------------------------------------------------------
 // ▗▄▄▄▖                 █            ▗▄▖

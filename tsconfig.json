@@ -2,11 +2,7 @@
     "compilerOptions": {
         "target": "ES2017",
         "module": "Node16",
-        "lib": [
-            "ESNext",
-            "DOM",
-            "WebWorker"
-        ],
+        "lib": ["ESNext", "DOM", "WebWorker"],
         "sourceMap": true,
         "outDir": "out",
         "strict": true,
@@ -18,13 +14,12 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "rootDir": ".",
-        "noEmit": true
+        "noEmit": true,
+        "paths": {
+            "three/webgpu": ["./node_modules/three/build/three.webgpu.js"],
+            "three/tsl"   : ["./node_modules/three/build/three.tsl.js"   ]
+        }
     },
-    "include": [
-        "src/**/*.ts",
-        "test/**/*.ts"
-    ],
-    "exclude": [
-        "node_modules"
-    ]
+    "include": ["src/**/*.ts", "test/**/*.ts"],
+    "exclude": ["node_modules"]
 }
