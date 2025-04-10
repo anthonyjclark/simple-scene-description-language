@@ -8,9 +8,12 @@
   - extension is broken
   - need ability to create a new name programmatically
   - scope is broken (does not go into function calls correctly; only global and local there)
+  - rendering viewport size (I made the render view nested and now the size is broken)
+  - rendering the urdf output (I added the div and nothing else)
 
+- [erasable js syntax](https://www.totaltypescript.com/erasable-syntax-only)
 - let user adjust joint angles (robot.setJointValue(...))
-- allow anonymous (automatically labled items) with '_'
+- allow anonymous (automatically labeled items) with '_'
 - add colors
 - disallow multiple definitions of the same name
 - fix output spacing (two spaces for first indentation instead of tab?)
@@ -127,3 +130,38 @@ First install dependencies (if cloning): `npm install`
 
 - [three.js](https://discoverthreejs.com/book/first-steps/transformations/#coordinate-systems-world-space-and-local-space)
 - [ROS](https://www.ros.org/reps/rep-0103.html#id19)
+
+### Link Reference
+
+Reference [urdf/XML/link - ROS Wiki](https://wiki.ros.org/urdf/XML/link).
+
+```xml
+<link (required) name="name">
+
+    (optional) <inertial>
+        (optional) <origin (optional) xyz="0 0 0" (optional) rpy="0 0 0" />
+        <mass value="1" />
+        <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0" />
+    </inertial>
+
+    (optional; multiple) <visual (optional) name="name">
+        (optional) <origin (optional) xyz="0 0 0" (optional) rpy="0 0 0" />
+        <geometry>
+            <box size="1 1 1" />
+            | <cylinder radius="1" length="1" />
+            | <sphere radius="1" />
+            | <mesh filename="path/to/mesh.dae" (optional) scale="1" />
+        </geometry>
+        (optional) <material (optional) name="name">
+            (optional) <color (range [0,1]) rgba="1 1 1 1" />
+            (optional) <texture filename="path/to/texture.png" />
+        </material>
+    </visual>
+
+    (optional; multiple) <collision (optional) name="name">
+        (optional) <origin (optional) xyz="0 0 0" (optional) rpy="0 0 0" />
+        <geometry>...</geometry>
+    </collision>
+
+</link>
+```
