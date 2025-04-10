@@ -10,6 +10,8 @@
   - scope is broken (does not go into function calls correctly; only global and local there)
   - rendering viewport size (I made the render view nested and now the size is broken)
   - rendering the urdf output (I added the div and nothing else)
+  - importing font... as json
+  - using css grid doesn't seem to get the correct size
 
 - [erasable js syntax](https://www.totaltypescript.com/erasable-syntax-only)
 - let user adjust joint angles (robot.setJointValue(...))
@@ -27,6 +29,8 @@
 - add light and dark modes (both text and visualization)
 - setup formatting
 - visualize joints
+
+- Recreate the tutorial: https://wiki.ros.org/urdf/Tutorials/Building%20a%20Visual%20Robot%20Model%20with%20URDF%20from%20Scratch
 
 ## Development
 

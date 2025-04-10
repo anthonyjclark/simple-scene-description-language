@@ -5,26 +5,70 @@ body {
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
   color: white;
   margin: 0;
+  padding: 0;
 }
+
 h1 {
   text-align: center;
 }
+
 footer {
   text-align: center;
-  color: #444;
-  font-size: 1.2rem;
   margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
 }
+
 a:link {
   color: gray;
 }
+
 a:visited {
   color: lightskyblue;
 }
-/* for monaco */
-.wrapper {
-  padding: 0 5%;
-}
+
 #monaco-editor-root {
-  height: calc(100vh - 7.5rem - 70px);
+}
+
+#flex-window-container {
+  height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-window-item {
+}
+
+#flex-window-item-header {
+}
+
+#flex-window-item-content {
+  flex: 1;
+}
+
+#flex-window-item-footer {
+}
+
+.grid-layout-container {
+  display: grid;
+  grid-template-columns: 50% auto;
+  grid-template-rows: 70% auto;
+  grid-template-areas:
+    "editor viewer"
+    "editor output";
+}
+
+.grid-layout-item {
+}
+
+.grid-layout-item-editor {
+  grid-area: editor;
+}
+
+.grid-layout-item-viewer {
+  grid-area: viewer;
+}
+
+.grid-layout-item-output {
+  grid-area: output;
 }

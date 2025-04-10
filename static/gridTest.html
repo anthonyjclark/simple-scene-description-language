@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Grid Demo</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #flex-window-container {
+            height: 100vh;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .flex-window-item {
+            /* display: flex; */
+            /* flex-direction: column; */
+        }
+
+        #flex-window-item-header {
+            background-color: #4CAF50;
+        }
+
+        #flex-window-item-content {
+            background-color: #2196F3;
+            flex: 1;
+        }
+
+        #flex-window-item-footer {
+            background-color: #f44336;
+        }
+
+        .grid-layout-container {
+            display: grid;
+            grid-template-columns: 50% auto;
+            grid-template-rows: 70% auto;
+            grid-template-areas:
+                "editor viewer"
+                "editor output";
+        }
+
+        .grid-layout-item {
+            background-color: #a04caf;
+            color: white;
+            text-align: center;
+            font-size: 1.2em;
+            border: 1px solid black;
+        }
+
+        .grid-layout-item-editor {
+            grid-area: editor;
+        }
+
+        .grid-layout-item-viewer {
+            grid-area: viewer;
+        }
+
+        .grid-layout-item-output {
+            grid-area: output;
+        }
+    </style>
+</head>
+
+<body>
+    <main id="flex-window-container">
+        <header id="flex-window-item-header" class="flex-window-item">
+            <h1>CSS Grid Demo</h1>
+            <h2>Grid below</h2>
+        </header>
+
+        <div id="flex-window-item-content" class="flex-window-item grid-layout-container">
+            <div class="grid-layout-item grid-layout-item-editor">1</div>
+            <div class="grid-layout-item grid-layout-item-viewer">2</div>
+            <div class="grid-layout-item grid-layout-item-output">3</div>
+        </div>
+
+        <footer id="flex-window-item-footer" class="flex-window-item">
+            <h2>Grid above</h2>
+        </footer>
+    </main>
+</body>
+
+</html>

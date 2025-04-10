@@ -2,10 +2,27 @@ import { MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wra
 import { configureWorker, defineUserServices } from './setupCommon.js';
 
 import {
-    AxesHelper, PCFSoftShadowMap, WebGLRenderer, Scene, PerspectiveCamera, Color,
-    DirectionalLight, AmbientLight, Mesh, PlaneGeometry, ShadowMaterial, GridHelper, Box3,
+    AmbientLight,
+    AxesHelper,
+    Box3,
+    Color,
+    DirectionalLight,
+    GridHelper,
+    Mesh,
+    MeshBasicMaterial,
+    PCFSoftShadowMap,
+    PerspectiveCamera,
+    PlaneGeometry,
+    Scene,
+    ShadowMaterial,
+    WebGLRenderer,
 } from "three";
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';;
+import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+// import { font } from "three/examples/fonts/helvetiker_regular.typeface.json";
+
 import URDFLoader from "urdf-loader";
 
 // const initialCode = `
@@ -241,6 +258,27 @@ export const executeExtended = async (htmlElement: HTMLElement) => {
 
         const gridHelper = new GridHelper(groundScale, groundScale, 0x000000, 0x808080);
         scene.add(gridHelper);
+
+        const fontLoader = new FontLoader();
+        fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {
+            const textMaterial = new MeshBasicMaterial({ color: 0xffffff });
+
+            const createLabel = (text: string, position: [number, number, number]) => {
+                const textGeometry = new TextGeometry(text, {
+                    font: font,
+                    // size: 100
+                    // depth: 50
+                });
+                const textMesh = new Mesh(textGeometry, textMaterial);
+                textMesh.position.set(...position);
+                scene.add(textMesh);
+            };
+
+            const axisOffset = groundScale / 2 + 0.5;
+            createLabel('X', [axisOffset, 0, 0]);
+            createLabel('Y', [0, axisOffset, 0]);
+            createLabel('Z', [0, 0, axisOffset]);
+        });
 
         const axisHelper = new AxesHelper(groundScale / 2);
         axisHelper.position.y = 0.001;
