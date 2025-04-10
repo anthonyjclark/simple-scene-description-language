@@ -1,3 +1,5 @@
+// TODO: type check things like mass
+
 import type { Robot, Configurations, Definition, Statement } from "./generated/ast.js";
 import type { Expression, Vector3 } from "./generated/ast.js";
 import type { Box, Cylinder } from "./generated/ast.js";
@@ -17,6 +19,7 @@ import { Unit, unit, add, subtract, multiply, divide, typeOf } from "mathjs";
 type Scope = Map<string, string | Unit | number>;
 type Config = Map<string, number | boolean>;
 type Shape = Box | Cylinder;
+type Triple = [number, number, number];
 
 export function generate(robot: Robot): [string, Config] {
 
@@ -96,19 +99,19 @@ function evaluateStatement(statement: Statement, scope: Scope, context: string):
 
 	if (isBody(statement)) {
 
-		// const name = statement.self ? `${sname}_${statement.name}` : statement.name;
 		const name = `${context}_${statement.name}`;
-		// console.log(`evaluateStatement: ${name} (${context})`);
-
 		scope.set(statement.name, name);
+
+		// All shapes must have a density
+		const density = statement.shape.density ? evaluateExpressionAsNumber(statement.shape.density, scope, 'kg/m^3') : 1000;
 
 		if (isBox(statement.shape)) {
 
-			return evaluateBox(statement.shape, name, scope);
+			return evaluateBox(statement.shape, name, density, scope);
 
 		} else if (isCylinder(statement.shape)) {
 
-			return evaluateCylinder(statement.shape, name, scope);
+			return evaluateCylinder(statement.shape, name, density, scope);
 
 		} else {
 
@@ -118,10 +121,7 @@ function evaluateStatement(statement: Statement, scope: Scope, context: string):
 
 	} else if (isJoint(statement)) {
 
-		// const name = statement.self ? `${sname}_${statement.name}` : statement.name;
 		const name = `${context}_${statement.name}`;
-		// console.log(`evaluateStatement: ${name} (${context})`);
-
 		scope.set(statement.name, name);
 
 		if (isRevolute(statement.jtype)) {
@@ -157,7 +157,7 @@ function evaluateStatement(statement: Statement, scope: Scope, context: string):
 			macroCallScope.set(params[i].name, evaluateExpression(args[i], scope));
 		}
 
-		// Add defitnitions from within the macro
+		// Evaluate definitions defined inside of the macro
 		evaluateDefinitions(macro.definitions, macroCallScope);
 
 		return evaluateStatements(macro.statements, macroCallScope, `${context}_${statement.name}`);
@@ -186,38 +186,76 @@ function evaluateStatement(statement: Statement, scope: Scope, context: string):
 	}
 }
 
-function evaluateShape(name: string, geometry: string, shape: Shape, scope: Scope): Generated {
-	// TODO:
-	// - visual: material
-	// - collision (same geometry as visual)
-	// - inertial: mass, origin, inertia
+function evaluateShape(shape: Shape, name: string, mass: number, inertia: string, geometry: string, scope: Scope): Generated {
+	// By default this will create a shape with inertial, visual, and collision elements
+
+	const origin = createOriginElement(shape.position, shape.rotation, scope);
+
+	// TODO: visual -> material
+	// TODO: handle optional inertial, visual, and collision elements
+
 	return expandToNode`
 			<link name="${name}">
-					<visual>
-							${poseToString(shape.position, shape.rotation, scope)}
-							<geometry>
-									${geometry}
-							</geometry>
+					<inertial>
+							${origin}
+							<mass value="${mass}" />
+							<inertia ${inertia} />
+					</inertial>
+					<visual name="${name}-visual">
+							${origin}
+							<geometry>${geometry}</geometry>
 					</visual>
+					<collision name="${name}-collision">
+							${origin}
+							<geometry>${geometry}</geometry>
+					</collision>
 			</link>`;
 }
 
-function evaluateBox(box: Box, name: string, scope: Scope): Generated {
+function evaluateBox(box: Box, name: string, density: number, scope: Scope): Generated {
 
-	const size = vector3ToString(box.size, scope, 'm') ?? "1 1 1";
-	const boxGeometry = `<box size="${size}" />`;
+	// TODO: consider height width and length instead of size
 
-	return evaluateShape(name, boxGeometry, box, scope);
+	// NOTE: default box size is 1x1x1
+	const [a, b, c] = box.size ? evaluateVector3(box.size, scope, 'm') : [1, 1, 1];
+
+	const geom = `<box size="${a} ${b} ${c}" />`;
+
+	const mass = a * b * c * density;
+
+	const inertiaFactor = mass / 12;
+	const ixx = inertiaFactor * (b ** 2 + c ** 2);
+	const ixy = 0;
+	const ixz = 0;
+	const iyy = inertiaFactor * (a ** 2 + c ** 2);
+	const iyz = 0;
+	const izz = inertiaFactor * (a ** 2 + b ** 2);
+	const inertia = `ixx="${ixx}" ixy="${ixy}" ixz="${ixz}" iyy="${iyy}" iyz="${iyz}" izz="${izz}"`;
+
+	return evaluateShape(box, name, mass, inertia, geom, scope);
 
 }
 
-function evaluateCylinder(cylinder: Cylinder, name: string, scope: Scope): Generated {
+function evaluateCylinder(cylinder: Cylinder, name: string, density: number, scope: Scope): Generated {
 
+	// NOTE: default cylinder radius and length are both 1
 	const radius = cylinder.radius ? evaluateExpressionAsNumber(cylinder.radius, scope, 'm') : 1;
 	const length = cylinder.length ? evaluateExpressionAsNumber(cylinder.length, scope, 'm') : 1;
-	const cylinderGeometry = `<cylinder radius="${radius}" length="${length}" />`;
 
-	return evaluateShape(name, cylinderGeometry, cylinder, scope);
+	const geom = `<cylinder radius="${radius}" length="${length}" />`;
+
+	const mass = Math.PI * radius ** 2 * length * density;
+
+	// TODO: This assumes orientation of the cylinder is along the z-axis
+	const ixx = (mass / 12) * (3 * radius ** 2 + length ** 2);
+	const ixy = 0;
+	const ixz = 0;
+	const iyy = (mass / 12) * (3 * radius ** 2 + length ** 2);
+	const iyz = 0;
+	const izz = (mass / 2) * radius ** 2;
+	const inertia = `ixx="${ixx}" ixy="${ixy}" ixz="${ixz}" iyy="${iyy}" iyz="${iyz}" izz="${izz}"`;
+
+	return evaluateShape(cylinder, name, mass, inertia, geom, scope);
 
 }
 
@@ -229,25 +267,27 @@ function evaluateRevolute(revolute: Revolute, name: string, context: string, sco
 	// const parent = revolute.parent;
 	// const parent_name = parent.self ? `${sname}_${parent.name}` : parent.name;
 	// const parent_name = `${context}_${parent.name}` ;
-	const parent_name = scope.get(revolute.parent.name) as string ?? revolute.parent.name;
+	const parent_name = scope.get(revolute.parent) as string ?? revolute.parent;
 	// console.log(`evaluateRevolute: ${name} ${parent_name} (${context})`);
 
 	// const child = revolute.child;
 	// const child_name = child.self ? `${sname}_${child.name}` : child.name;
 	// const child_name = `${context}_${child.name}` ;
-	const child_name = scope.get(revolute.child.name) as string ?? revolute.child.name;
+	const child_name = scope.get(revolute.child) as string ?? revolute.child;
 	// console.log(`evaluateRevolute: ${name} ${child_name} (${context})`);
 
 	// <limit effort="30" velocity="1.0" lower="-2.2" upper="0.7" />
+
+	const axis =  revolute.axis ? expandToNode`<axis xyz="${vector3ToString(revolute.axis, scope)}" />` : undefined;
 
 	// TODO:
 	// - limit: effort, velocity, lower, upper
 	return expandToNode`
 			<joint name="${name}" type="revolute">
-					<parent link="${parent_name}"/>
-					<child link="${child_name}"/>
-					${poseToString(revolute.position, revolute.rotation, scope)}
-					${axisToString(revolute.axis, scope)}
+					<parent link="${parent_name}" />
+					<child link="${child_name}" />
+					${createOriginElement(revolute.position, revolute.rotation, scope)}
+					${axis}
 					${limitsToString(revolute, scope)}
 			</joint>`;
 
@@ -327,37 +367,31 @@ function evaluateExpression(expression: Expression, scope: Scope): Unit | number
 	}
 }
 
-function vector3ToString(v3: Vector3 | undefined, scope: Scope, units?: string): string | undefined {
-
-	if (!v3) return undefined;
+function evaluateVector3(v3: Vector3, scope: Scope, units?: string): Triple {
 
 	const a = evaluateExpressionAsNumber(v3.a, scope, units);
 	const b = evaluateExpressionAsNumber(v3.b, scope, units);
 	const c = evaluateExpressionAsNumber(v3.c, scope, units);
 
-	return v3 ? `${a} ${b} ${c}` : undefined;
-
+	return [a, b, c];
 }
 
-function poseToString(position: Vector3 | undefined, rotation: Vector3 | undefined, scope: Scope): Generated {
+function vector3ToString(v3: Vector3, scope: Scope, units?: string): string {
 
-	let pos = vector3ToString(position, scope, 'm');
-	let rot = vector3ToString(rotation, scope, 'rad');
+	const [a, b, c] = evaluateVector3(v3, scope, units);
 
-	if (pos || rot) {
-		pos ??= "0 0 0";
-		rot ??= "0 0 0";
-		return expandToNode`<origin xyz="${pos}" rpy="${rot}"/>`;
-	} else {
-		return undefined;
-	}
-
+	return `${a} ${b} ${c}`;
 }
 
-function axisToString(axis: Vector3 | undefined, scope: Scope): Generated {
+function createOriginElement(position: Vector3 | undefined, rotation: Vector3 | undefined, scope: Scope): Generated {
 
-	const xyz = vector3ToString(axis, scope);
-	return xyz ? expandToNode`<axis xyz="${xyz}" />` : undefined;
+	// No need to add pose string if both position and rotation are undefined
+	if (!position && !rotation) return undefined;
+
+	const xyz = position ? ` xyz="${vector3ToString(position, scope, 'm')}"` : "";
+	const rpy = rotation ? ` rpy="${vector3ToString(rotation, scope, 'rad')}"` : "";
+
+	return expandToNode`<origin${xyz}${rpy} />`;
 
 }
 

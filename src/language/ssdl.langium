@@ -2,15 +2,6 @@ grammar Ssdl
 
 // TODO: what are interfaces for in grammars
 
-// Concepts
-// - inertial (origin, mass, inertia)
-// - visual (origin, geometry (box, etc.), material (color, texture))
-// - collision (origin, geometry)
-// - joints (parent, child, origin, axis, etc.)
-
-// TODO: entry with scene instead of robot?
-
-
 entry Robot:
     'name' name=ID (configurations+=Configurations)* (definitions+=Definition | statements+=Statement)*;
 
@@ -64,68 +55,67 @@ fragment Block:
 //  ▀▀▘   ▀▀  ▀▀▝▘  ▀▀  ▝▀▀ ▝▘▀▝▘ ▝▀▀ ▝▘ ▝▘  ▀▀  ▀▀▀
 // ----------------------------------------------------------------
 
-// TODO:
-// Body types: box, sphere, cylinder, capsule, mesh, ...
-// Joint types: revolute, prismatic, fixed, ...
-// for loop, if statement
-// TODO: use guard to check if defining a macro or not?
+// TODO: if statement
 Statement:
     Body | Joint | MacroCall | ForLoop;
 
 // TODO: capsule? mesh? others?
 Body:
-    Name '=' shape=(Box | Cylinder | Sphere);
+    name=ID '=' shape=(Box | Cylinder | Sphere);
 
-fragment Name:
-    (name=ID);//| (self='self' '.' name=ID);
+// TODO: add a flag to disable?: noVisual=true, --no-visual
+// TODO: visual -> geometry -> mesh
+// TODO: visual -> material -> texture
+// TODO: color types rgb, hsv, rgba, hex (3 and 6), names
+// TODO: allow inertial, collision, visual to have differing attributes/values (e.g., origin -> xyz)
+// TODO: allow multiple collision shapes
+// TODO: allow multiple visual shapes
+// TODO: does the strict order matter?
+// TODO: visualize even when no visual is given? maybe make transparent?
 
-// TODO: make size required as in URDF? or optional
+fragment BodyAttributes:
+    ('position' '=' position=Vector3)?
+    ('rotation' '=' rotation=Vector3)?
+    ('density' '=' density=Expression)?
+    ('ixx' '=' ixx=Expression)?
+    ('ixy' '=' ixy=Expression)?
+    ('ixz' '=' ixz=Expression)?
+    ('iyy' '=' iyy=Expression)?
+    ('iyz' '=' iyz=Expression)?
+    ('izz' '=' izz=Expression)?
+    ('color' '=' color=RGBA)?;
+
 Box:
     'Box' '{'
-    ('size' '=' size=Vector3)
-    BodyAttributes '}';
+        ('size' '=' size=Vector3)?
+        BodyAttributes
+    '}';
 
 Cylinder:
     'Cylinder' '{'
-    ('length' '=' length=Expression)?
-    ('radius' '=' radius=Expression)?
-    BodyAttributes '}';
+        ('length' '=' length=Expression)?
+        ('radius' '=' radius=Expression)?
+        ('up' '=' up=('z-axis' | 'x-axis' | 'y-axis'))?
+        BodyAttributes
+    '}';
 
 Sphere:
     'Sphere' '{'
-    ('radius' '=' radius=Expression)?
-    BodyAttributes '}';
+        ('radius' '=' radius=Expression)?
+        BodyAttributes
+    '}';
 
-// TODO: inertial, visual, collision all optional
-// inertial: origin, mass, inertia
-// visual: origin, geometry (box, cylinder, sphere, mesh), material (color, texture)
-// collision: origin, geometry
-// TODO: color types rgb, hsv, rgba, hex (3 and 6), names
-fragment BodyAttributes:
-    ('position' '=' position=Vector3)?
-    ('rotation' '=' rotation=Vector3)?;
 
 // TODO: others? universal?
 // TODO: limit is required for revolute and prismatic
 Joint:
-    Name '=' jtype=(Revolute | Prismatic | Fixed);
-
-Revolute:
-    'Revolute' '{'
-    JointAttributes
-    ('limit' '=' limit=Expression)? '}';
-
-Prismatic:
-    'Prismatic' '{' JointAttributes '}';
-
-Fixed:
-    'Fixed' '{' JointAttributes '}';
+    name=ID '=' jtype=(Revolute | Prismatic | Fixed);
 
 // TODO: upper and lower limits
 // TODO: move some to specific joints?
 fragment JointAttributes:
-    ('parent' '=' parent=NameLabel)
-    ('child' '=' child=NameLabel)
+    ('parent' '=' parent=ID)
+    ('child' '=' child=ID)
     ('position' '=' position=Vector3)?
     ('rotation' '=' rotation=Vector3)?
     ('axis' '=' axis=Vector3)?
@@ -134,14 +124,25 @@ fragment JointAttributes:
     ('lowerAngleLimit' '=' lowerAngleLimit=Expression)?
     ('upperAngleLimit' '=' upperAngleLimit=Expression)?;
 
-NameLabel:
-    (name=ID);//| (self='self' '.' name=ID);
+Revolute:
+    'Revolute' '{'
+        JointAttributes
+        ('limit' '=' limit=Expression)?
+    '}';
+
+Prismatic:
+    'Prismatic' '{'
+        JointAttributes
+    '}';
+
+Fixed:
+    'Fixed' '{'
+        JointAttributes
+    '}';
 
 // TODO: require named arguments?
 MacroCall:
-    Name '='
-    macro=[MacroDef:ID]
-    '(' (arguments+=Expression (',' arguments+=Expression)*)? ')';
+    name=ID '=' macro=[MacroDef:ID] '(' (arguments+=Expression (',' arguments+=Expression)*)? ')';
 
 // TODO: change to 'loop' with ability to act as while or for loop?
 ForLoop:
@@ -168,8 +169,6 @@ Addition infers Expression:
 Multiplication infers Expression:
     Atomic ({infer BinaryExpression.lhs=current} op=('*' | '/') rhs=Atomic)*;
 
-// TODO: function calls? built-in and user-defined
-// TODO: cannot handle multiple scopes for reference
 Atomic infers Expression:
     {infer Parenthesized} '(' expression=Expression ')' |
     {infer NumberLiteral} value=NUMBER units=Units? |
@@ -179,6 +178,9 @@ Atomic infers Expression:
 
 Vector3:
     a=Expression ',' b=Expression ',' c=Expression;
+
+RGBA:
+    r=Expression ',' c=Expression ',' b=Expression ',' a=Expression;
 
 // A good resource for units: https://numbat.dev/doc/list-units.html
 Units returns string:

@@ -40,9 +40,6 @@ let chassis_length = 10 cm
 let chassis_width = 16 cm
 let chassis_height = 4 cm
 
-// TODO: unused
-let chassis_mass = chassis_length * chassis_width * chassis_height * material_density
-
 let wheel_radius = 2.5 cm
 let wheel_thickness = 1 cm
 
@@ -110,6 +107,7 @@ macro Wheel(reflect_fr, reflect_lr) {
 
 chassis = Box {
     size = chassis_length, chassis_width, chassis_height
+    density = material_density
 }
 
 front_left_wheel = Wheel(1, -1)
