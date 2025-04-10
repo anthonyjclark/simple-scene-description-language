@@ -5,9 +5,9 @@
     <meta charset='utf-8'>
     <!-- Page & Monaco styling -->
     <title>Simple Scene Description Language</title>
-  <script type="module" crossorigin src="../assets/monacoExtendedVis-nvguWgyO.js"></script>
-  <link rel="modulepreload" crossorigin href="../assets/wrapper-CvPGV_jM.js">
-  <link rel="modulepreload" crossorigin href="../assets/setupExtended-Cqoz6fWB.js">
+  <script type="module" crossorigin src="../assets/monacoExtendedVis-BQDTYCYd.js"></script>
+  <link rel="modulepreload" crossorigin href="../assets/wrapper-BNTiB1QE.js">
+  <link rel="modulepreload" crossorigin href="../assets/setupExtended-BWPngswG.js">
   <link rel="stylesheet" crossorigin href="../assets/styles-YmoE2xIq.css">
 </head>
 
@@ -17,7 +17,10 @@
 
     <div class="wrapper" style="display: flex;">
         <div id="monaco-editor-root" style="flex: 1;"></div>
-        <div id="rendered-view" style="flex: 1;"></div>
+        <div id="output-side" style="flex: 1;">
+            <div id="rendered-view"></div>
+            <div id="urdf-output" style="height:100px;"></div>
+        </div>
     </div>
 
     <footer>
