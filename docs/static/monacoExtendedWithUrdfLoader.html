@@ -5,10 +5,10 @@
     <meta charset='utf-8'>
     <link rel="icon" type="image/svg+xml" href="../assets/favicon-CWPIM5aR.ico" />
     <title>Simple Scene Description Language</title>
-  <script type="module" crossorigin src="../assets/monacoExtendedVis-BQWxbXYt.js"></script>
-  <link rel="modulepreload" crossorigin href="../assets/wrapper-CUJR3XAF.js">
-  <link rel="modulepreload" crossorigin href="../assets/setupExtended-vPaUVtE3.js">
-  <link rel="stylesheet" crossorigin href="../assets/styles-IvxxgrvK.css">
+  <script type="module" crossorigin src="../assets/monacoExtendedVis-jHJRFl4J.js"></script>
+  <link rel="modulepreload" crossorigin href="../assets/wrapper-oO1vqCh_.js">
+  <link rel="modulepreload" crossorigin href="../assets/setupExtended-zH1atgZW.js">
+  <link rel="stylesheet" crossorigin href="../assets/styles-D-CdwtlY.css">
 </head>
 
 <body>
@@ -19,10 +19,14 @@
             <h1>Simple Scene Description Language</h1>
         </header>
 
+        <button id="urdf-download" style="position: absolute; right: 0%; bottom: 25%">Download URDF</button>
+
         <div id="flex-window-item-content" class="flex-window-item grid-layout-container">
             <div id="monaco-editor-root" class="grid-layout-item grid-layout-item-editor"></div>
             <div id="rendered-view" class="grid-layout-item grid-layout-item-viewer"></div>
-            <div id="urdf-output" class="grid-layout-item grid-layout-item-output"></div>
+            <div id="urdf-output-container" class="grid-layout-item grid-layout-item-output">
+                <pre id="urdf-output"></pre>
+            </div>
         </div>
 
         <footer> </footer>
