@@ -77,12 +77,12 @@ fragment BodyAttributes:
     ('position' '=' position=Vector3)?
     ('rotation' '=' rotation=Vector3)?
     ('density' '=' density=Expression)?
-    ('ixx' '=' ixx=Expression)?
-    ('ixy' '=' ixy=Expression)?
-    ('ixz' '=' ixz=Expression)?
-    ('iyy' '=' iyy=Expression)?
-    ('iyz' '=' iyz=Expression)?
-    ('izz' '=' izz=Expression)?
+    ('ixx' '=' ixx=Expression)? // TODO: currently ignored
+    ('ixy' '=' ixy=Expression)? // TODO: currently ignored
+    ('ixz' '=' ixz=Expression)? // TODO: currently ignored
+    ('iyy' '=' iyy=Expression)? // TODO: currently ignored
+    ('iyz' '=' iyz=Expression)? // TODO: currently ignored
+    ('izz' '=' izz=Expression)? // TODO: currently ignored
     ('color' '=' color=RGBA)?;
 
 Box:
