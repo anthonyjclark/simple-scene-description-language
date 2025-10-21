@@ -20,7 +20,6 @@
 - disallow multiple definitions of the same name
 - fix output spacing (two spaces for first indentation instead of tab?)
 - change to kebab-case from snake_case
-- add an icon
 - add an icon to the package.json file: "icon": "icon.png",
 - extend existing object using 'with' keyword
 - add including files
@@ -30,7 +29,10 @@
 - setup formatting
 - visualize joints
 
-- Recreate the tutorial: https://wiki.ros.org/urdf/Tutorials/Building%20a%20Visual%20Robot%20Model%20with%20URDF%20from%20Scratch
+- Recreate the tutorial: [Building a Visual Robot Model with URDF from Scratch](https://wiki.ros.org/urdf/Tutorials/Building%20a%20Visual%20Robot%20Model%20with%20URDF%20from%20Scratch)
+
+- Update langium to latest
+  - [langium/CHANGELOG.md](https://github.com/eclipse-langium/langium/blob/main/CHANGELOG.md)
 
 ## Development
 
@@ -100,6 +102,10 @@ First install dependencies (if cloning): `npm install`
     - ?Run `vsce package`
     - ?Install the package in VSCode
     - ?Right-click and install package (same for reinstall)
+
+```bash
+magick ssdl-logo.png -background transparent -define icon:auto-resize=256,128,64,48,32,16 ssdl-logo.ico
+```
 
 ## Testing Output
 
