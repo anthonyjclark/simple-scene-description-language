@@ -21,7 +21,9 @@ import {
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';;
 import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-// import { font } from "three/examples/fonts/helvetiker_regular.typeface.json";
+
+// @ts-ignore: ignoring the json import issue
+import fontJson from "three/examples/fonts/helvetiker_regular.typeface.json";
 
 import URDFLoader from "urdf-loader";
 
@@ -259,26 +261,23 @@ export const executeExtended = async (htmlElement: HTMLElement) => {
         const gridHelper = new GridHelper(groundScale, groundScale, 0x000000, 0x808080);
         scene.add(gridHelper);
 
+        // TODO: the axis labels should always face the camera
+        // TODO: should be configurable to turn off/on
         const fontLoader = new FontLoader();
-        fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {
-            const textMaterial = new MeshBasicMaterial({ color: 0xffffff });
+        const font = fontLoader.parse(fontJson);
+        const textMaterial = new MeshBasicMaterial({ color: 0xFAEBD7 });
 
-            const createLabel = (text: string, position: [number, number, number]) => {
-                const textGeometry = new TextGeometry(text, {
-                    font: font,
-                    // size: 100
-                    // depth: 50
-                });
-                const textMesh = new Mesh(textGeometry, textMaterial);
-                textMesh.position.set(...position);
-                scene.add(textMesh);
-            };
+        const createLabel = (text: string, position: [number, number, number]) => {
+            const textGeometry = new TextGeometry(text, { font: font, size: 0.8, depth: 0.1 });
+            const textMesh = new Mesh(textGeometry, textMaterial);
+            textMesh.position.set(...position);
+            scene.add(textMesh);
+        };
 
-            const axisOffset = groundScale / 2 + 0.5;
-            createLabel('X', [axisOffset, 0, 0]);
-            createLabel('Y', [0, axisOffset, 0]);
-            createLabel('Z', [0, 0, axisOffset]);
-        });
+        const axisOffset = groundScale / 5 + 0.5;
+        createLabel('X', [axisOffset, 0, 0]);
+        createLabel('Y', [0, axisOffset, 0]);
+        createLabel('Z', [0, 0, axisOffset]);
 
         const axisHelper = new AxesHelper(groundScale / 2);
         axisHelper.position.y = 0.001;
