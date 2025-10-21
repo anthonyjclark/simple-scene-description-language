@@ -3,7 +3,7 @@
 
 <head>
     <meta charset='utf-8'>
-    <!-- Page & Monaco styling -->
+    <link rel="icon" type="image/svg+xml" href="./favicon.ico" />
     <link href="styles.css" rel="stylesheet" />
     <title>Simple Scene Description Language</title>
 </head>
@@ -16,15 +16,17 @@
             <h1>Simple Scene Description Language</h1>
         </header>
 
+        <button id="urdf-download" style="position: absolute; right: 0%; bottom: 25%">Download URDF</button>
+
         <div id="flex-window-item-content" class="flex-window-item grid-layout-container">
             <div id="monaco-editor-root" class="grid-layout-item grid-layout-item-editor"></div>
             <div id="rendered-view" class="grid-layout-item grid-layout-item-viewer"></div>
-            <div id="urdf-output" class="grid-layout-item grid-layout-item-output"></div>
+            <div id="urdf-output-container" class="grid-layout-item grid-layout-item-output">
+                <pre id="urdf-output"></pre>
+            </div>
         </div>
 
-        <footer id="flex-window-item-footer" class="flex-window-item">
-            <img width="125" src="https://langium.org/assets/langium_logo_w_nib.svg" alt="Langium">
-        </footer>
+        <footer> </footer>
 
     </main>
 

@@ -36,6 +36,7 @@ shared.workspace.DocumentBuilder.onBuildPhase(DocumentState.Validated, documents
 		// Check for errors
 		const errors = document.diagnostics?.filter((diagnostic) => diagnostic.severity === 1);
 		if (!errors || errors.length === 0) {
+			// TODO: catch errors such as those from math.js
 			[urdf, config] = generate(robot);
 		}
 

@@ -206,6 +206,26 @@ export const executeExtended = async (htmlElement: HTMLElement) => {
     let camera: PerspectiveCamera;
     let robot: any;
 
+    const urdfDiv = document.getElementById("urdf-output");
+    const urdfDownloadButton = document.getElementById("urdf-download");
+
+    // TODO: only allow download if there is valid content
+    urdfDownloadButton?.addEventListener('click', () => {
+        if (!urdfDiv) return;
+        const urdfText = urdfDiv.innerText;
+        const blob = new Blob([urdfText], { type: 'application/xml' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'scene.urdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+
+
     rendererInit();
     render();
 
@@ -325,8 +345,13 @@ export const executeExtended = async (htmlElement: HTMLElement) => {
             robot = loader.parse(urdfString)
         } catch (error) {
             console.error("Error parsing URDF:", error);
+            urdfDiv!.innerText = "Error parsing URDF.";
             return;
         }
+
+        urdfDiv!.innerText = urdfString;
+        // urdfDiv!.textContent = 'hello';
+        // urdfDiv!.innerText = 'hello';
 
         // For better visualization:
         // - cast shadows
