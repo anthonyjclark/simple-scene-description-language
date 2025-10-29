@@ -3,11 +3,11 @@
 import type { Robot, Configurations, Definition, Statement } from "./generated/ast.js";
 import type { Expression, Vector3 } from "./generated/ast.js";
 import type { Box, Cylinder } from "./generated/ast.js";
-import type { Revolute } from "./generated/ast.js";
+import type { Continuous, Revolute } from "./generated/ast.js";
 
 import { isConstantDef, isForLoop, isFunctionCall, isMacroDef } from "./generated/ast.js";
 import { isBody, isBox, isCylinder } from "./generated/ast.js";
-import { isJoint, isRevolute } from "./generated/ast.js";
+import { isJoint, isContinuous, isRevolute } from "./generated/ast.js";
 import { isMacroCall } from "./generated/ast.js";
 import { isBinaryExpression, isParenthesized, isNumberLiteral, isValueReference } from "./generated/ast.js";
 
@@ -29,12 +29,13 @@ export function generate(robot: Robot): [string, Config] {
 	// Top level definitions
 	const scope = evaluateDefinitions(robot.definitions);
 
-	// TODO: remove robot.name from call to evaluateStatements?
+	// TODO: remove robot.name from call to evaluateStatements? (same note in evaluateStatements)
+	// ${evaluateStatements(robot.statements, scope, robot.name)}
 	const generatedNode = expandToNode`
 			<?xml version="1.0"?>
 			<?xml-model href="https://raw.githubusercontent.com/ros/urdfdom/master/xsd/urdf.xsd" ?>
 			<robot name="${robot.name}" xmlns="http://www.ros.org">
-					${evaluateStatements(robot.statements, scope, robot.name)}
+					${evaluateStatements(robot.statements, scope, "")}
 			</robot>
 	`;
 
@@ -88,6 +89,7 @@ function evaluateDefinitions(definitions: Definition[], scope?: Scope): Scope {
 function evaluateStatements(statements: Statement[], scope: Scope, context: string): Generated {
 
 	// Creating a closure for joinToNode
+	// TODO: pass in empty string for context? (not need to "namespace" top-level statements; e.g., robot_chassis --> chassis)
 	const evaluate = (s: Statement) => evaluateStatement(s, scope, context);
 
 	return expandToNode`
@@ -100,7 +102,7 @@ function evaluateStatement(statement: Statement, scope: Scope, context: string):
 
 	if (isBody(statement)) {
 
-		const name = `${context}_${statement.name}`;
+		const name = context.length > 0 ? `${context}_${statement.name}` : statement.name;
 		scope.set(statement.name, name);
 
 		// All shapes must have a density
@@ -122,10 +124,14 @@ function evaluateStatement(statement: Statement, scope: Scope, context: string):
 
 	} else if (isJoint(statement)) {
 
-		const name = `${context}_${statement.name}`;
+		const name = context.length > 0 ? `${context}_${statement.name}` : statement.name;
 		scope.set(statement.name, name);
 
-		if (isRevolute(statement.jtype)) {
+		if (isContinuous(statement.jtype)) {
+
+			return evaluateContinuous(statement.jtype, name, context, scope);
+
+		} else if (isRevolute(statement.jtype)) {
 
 			return evaluateRevolute(statement.jtype, name, context, scope);
 
@@ -161,7 +167,8 @@ function evaluateStatement(statement: Statement, scope: Scope, context: string):
 		// Evaluate definitions defined inside of the macro
 		evaluateDefinitions(macro.definitions, macroCallScope);
 
-		return evaluateStatements(macro.statements, macroCallScope, `${context}_${statement.name}`);
+		const name = context.length > 0 ? `${context}_${statement.name}` : statement.name;
+		return evaluateStatements(macro.statements, macroCallScope, name);
 
 	} else if (isForLoop(statement)) {
 
@@ -190,24 +197,22 @@ function evaluateStatement(statement: Statement, scope: Scope, context: string):
 function evaluateShape(shape: Shape, name: string, mass: number, inertia: string, geometry: string, scope: Scope): Generated {
 	// By default this will create a shape with inertial, visual, and collision elements
 
-	const origin = createOriginElement(shape.position, shape.rotation, scope);
+	// const origin = createOriginElement(shape.position, shape.rotation, scope);
 
 	// TODO: visual -> material
 	// TODO: handle optional inertial, visual, and collision elements
+	// TODO: handle multiple visual and collision elements
 
 	return expandToNode`
 			<link name="${name}">
 					<inertial>
-							${origin}
 							<mass value="${mass}" />
 							<inertia ${inertia} />
 					</inertial>
 					<visual name="${name}_visual">
-							${origin}
 							<geometry>${geometry}</geometry>
 					</visual>
 					<collision name="${name}_collision">
-							${origin}
 							<geometry>${geometry}</geometry>
 					</collision>
 			</link>`;
@@ -258,6 +263,20 @@ function evaluateCylinder(cylinder: Cylinder, name: string, density: number, sco
 
 	return evaluateShape(cylinder, name, mass, inertia, geom, scope);
 
+}
+
+// TODO: extract shared joint code between revolute and continuous (and others)
+function evaluateContinuous(continuous: Continuous, name: string, context: string, scope: Scope): Generated {
+	const parent_name = scope.get(continuous.parent) as string ?? continuous.parent;
+	const child_name = scope.get(continuous.child) as string ?? continuous.child;
+	const axis =  continuous.axis ? expandToNode`<axis xyz="${vector3ToString(continuous.axis, scope)}" />` : undefined;
+	return expandToNode`
+			<joint name="${name}" type="continuous">
+					<parent link="${parent_name}" />
+					<child link="${child_name}" />
+					${createOriginElement(continuous.position, continuous.rotation, scope)}
+					${axis}
+			</joint>`;
 }
 
 function evaluateRevolute(revolute: Revolute, name: string, context: string, scope: Scope): Generated {
@@ -398,12 +417,13 @@ function createOriginElement(position: Vector3 | undefined, rotation: Vector3 | 
 
 function limitsToString(revolute: Revolute, scope: Scope): Generated {
 
-	const maxEffort = revolute.maxEffort ? evaluateExpressionAsNumber(revolute.maxEffort, scope, 'N m') : 0;
-	const maxVelocity = revolute.maxVelocity ? evaluateExpressionAsNumber(revolute.maxVelocity, scope, 'm/s') : 0;
+	const maxEffort = revolute.effort ? evaluateExpressionAsNumber(revolute.effort, scope, 'N m') : 0;
+	const maxVelocity = revolute.velocity ? evaluateExpressionAsNumber(revolute.velocity, scope, 'm/s') : 0;
 
-	const lowerString = revolute.lowerAngleLimit ? `lower="${evaluateExpressionAsNumber(revolute.lowerAngleLimit, scope, 'rad')}" ` : "";
-	const upperString = revolute.upperAngleLimit ? `upper="${evaluateExpressionAsNumber(revolute.upperAngleLimit, scope, 'rad')}" ` : "";
+	const lowerString = revolute.lower ? `lower="${evaluateExpressionAsNumber(revolute.lower, scope, 'rad')}" ` : "";
+	const upperString = revolute.upper ? `upper="${evaluateExpressionAsNumber(revolute.upper, scope, 'rad')}" ` : "";
 
+	// We don't want a limit element if no limits are specified
 	return expandToNode`<limit ${lowerString}${upperString}effort="${maxEffort}" velocity="${maxVelocity}" />`;
 
 }

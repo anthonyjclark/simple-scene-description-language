@@ -5,6 +5,10 @@ import * as path from 'node:path';
 
 import { generate } from "../language/generator.js";
 
+export function generateMJCF(robot: Robot, filePath: string, destination: string | undefined): string {
+    throw new Error("Not implemented");
+}
+
 export function generateSDF(robot: Robot, filePath: string, destination: string | undefined): string {
     throw new Error("Not implemented");
 }
@@ -25,4 +29,8 @@ export function generateURDF(robot: Robot, filePath: string, destination: string
 
     return generatedFilePath;
 
+}
+
+export function generateUSD(robot: Robot, filePath: string, destination: string | undefined): string {
+    throw new Error("Not implemented");
 }

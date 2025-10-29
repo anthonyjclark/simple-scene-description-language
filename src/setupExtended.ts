@@ -85,6 +85,10 @@ macro Extension(parentWheel, x, y, z, pitch) {
         position = x, y, z
         rotation = 0, pitch, 0
         axis = 0, 1, 0
+        lower = 0
+        upper = pi
+        effort = 10
+        velocity = 10
     }
 }
 
@@ -100,7 +104,7 @@ macro Wheel(reflect_fr, reflect_lr) {
         rotation = pi/2, 0, 0
     }
 
-    joint = Revolute {
+    joint = Continuous {
         parent = chassis
         child = body
         position = x, y, z
@@ -372,7 +376,48 @@ export const executeExtended = async (htmlElement: HTMLElement) => {
             robot.position.y -= bb.min.y;
         }
 
+        // Add joint sliders
+        const jointSlidersList = document.getElementById("joint-sliders");
+        jointSlidersList!.innerHTML = "";
+
+        Object.keys(robot.joints).map(key => robot.joints[key]).forEach((joint: any) => {
+            const li = document.createElement("li");
+            // layout: label on left with fixed width, slider fills remaining space
+            li.style.display = "flex";
+            li.style.alignItems = "center";
+            li.style.marginBottom = "6px";
+
+            const label = document.createElement("label");
+            label.textContent = joint.name;
+            label.style.display = "inline-block";
+            label.style.width = "140px"; // adjust as needed to align labels
+            label.style.textAlign = "right";
+            label.style.marginRight = "12px";
+            label.style.fontFamily = "inherit";
+
+            const input = document.createElement("input");
+            input.type = "range";
+            // TODO: consider fixed and continuous joints
+            input.min = `${-Math.PI}`;
+            input.max = `${Math.PI}`;
+            input.step = "0.01";
+            input.value = "0";
+            input.style.flex = "1";
+            input.style.cursor = "pointer";
+            input.style.marginLeft = "4px";
+
+            input.addEventListener("input", () => {
+            const value = parseFloat(input.value);
+            joint.setJointValue(value);
+            });
+
+            li.appendChild(label);
+            li.appendChild(input);
+            jointSlidersList!.appendChild(li);
+        });
+
         scene.add(robot)
+
 
     }
 

@@ -145,6 +145,19 @@ magick ssdl-logo.png -background transparent -define icon:auto-resize=256,128,64
 
 Reference [URDF XML Specification](https://wiki.ros.org/urdf/XML).
 
+A note on origins:
+
+- links can have separate origins for inertial, visual, and collision elements
+  - these origins are relative to the link frame
+  - by default, link frames are at the global origin
+  - by default, inertial, visual, and collision origins are at the link frame origin
+- joints have origins
+  - joint origins do not affect the parent link frame
+  - child links are positioned at the joint origin
+  - joint origins are relative to the parent link frame (recursively)
+  - rule of thumb: use a joint to position a child link relative to its parent link; use the child links origin to rotate
+- visualize/debug with `gz sim
+
 ```xml
 <?xml version="1.0"?>
 <?xml-model href="https://raw.githubusercontent.com/ros/urdfdom/master/xsd/urdf.xsd" ?>

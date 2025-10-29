@@ -106,13 +106,10 @@ Sphere:
     '}';
 
 
-// TODO: others? universal?
-// TODO: limit is required for revolute and prismatic
+// TODO: look at the URDF specification
 Joint:
-    name=ID '=' jtype=(Revolute | Prismatic | Fixed);
+    name=ID '=' jtype=(Revolute | Continuous | Prismatic | Fixed);
 
-// TODO: upper and lower limits
-// TODO: move some to specific joints?
 fragment JointAttributes:
     ('parent' '=' parent=ID)
     ('child' '=' child=ID)
@@ -120,19 +117,29 @@ fragment JointAttributes:
     ('rotation' '=' rotation=Vector3)?
     ('axis' '=' axis=Vector3)?
     ('maxEffort' '=' maxEffort=Expression)?
-    ('maxVelocity' '=' maxVelocity=Expression)?
-    ('lowerAngleLimit' '=' lowerAngleLimit=Expression)?
-    ('upperAngleLimit' '=' upperAngleLimit=Expression)?;
+    ('maxVelocity' '=' maxVelocity=Expression)?;
 
 Revolute:
     'Revolute' '{'
         JointAttributes
-        ('limit' '=' limit=Expression)?
+        ('lower' '=' lower=Expression)?
+        ('upper' '=' upper=Expression)?
+        ('effort' '=' effort=Expression)
+        ('velocity' '=' velocity=Expression)
+    '}';
+
+Continuous:
+    'Continuous' '{'
+        JointAttributes
     '}';
 
 Prismatic:
     'Prismatic' '{'
         JointAttributes
+        ('lower' '=' lower=Expression)?
+        ('upper' '=' upper=Expression)?
+        ('effort' '=' effort=Expression)
+        ('velocity' '=' velocity=Expression)
     '}';
 
 Fixed:
