@@ -143,35 +143,52 @@ magick ssdl-logo.png -background transparent -define icon:auto-resize=256,128,64
 
 ### Link Reference
 
-Reference [urdf/XML/link - ROS Wiki](https://wiki.ros.org/urdf/XML/link).
+Reference [URDF XML Specification](https://wiki.ros.org/urdf/XML).
 
 ```xml
-<link (required) name="name">
+<?xml version="1.0"?>
+<?xml-model href="https://raw.githubusercontent.com/ros/urdfdom/master/xsd/urdf.xsd" ?>
+<robot name="robot_name" xmlns="http://www.ros.org">
+    (optional; multiple) <link name="link_name1">
 
-    (optional) <inertial>
+        (optional) <inertial>
+            (optional) <origin (optional) xyz="0 0 0" (optional) rpy="0 0 0" />
+            <mass value="1" />
+            <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0" />
+        </inertial>
+
+        (optional; multiple) <visual (optional) name="visual_name1">
+            (optional) <origin (optional) xyz="0 0 0" (optional) rpy="0 0 0" />
+            <geometry>
+                | <box size="1 1 1" />
+                | <cylinder radius="1" length="1" />
+                | <sphere radius="1" />
+                | <mesh filename="path/to/mesh.dae" (optional) scale="1" />
+            </geometry>
+            (optional) <material (optional) name="material_name">
+                (optional) <color (range [0,1]) rgba="1 1 1 1" />
+                (optional) <texture filename="path/to/texture.png" />
+            </material>
+        </visual>
+
+        (optional; multiple) <collision (optional) name="collision_name">
+            (optional) <origin (optional) xyz="0 0 0" (optional) rpy="0 0 0" />
+            <geometry>same specification as above</geometry>
+        </collision>
+
+    </link>
+
+    (optional; multiple) <joint name="joint_name1" type="revolute|continuous|prismatic|fixed|floating|planar">
+
         (optional) <origin (optional) xyz="0 0 0" (optional) rpy="0 0 0" />
-        <mass value="1" />
-        <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0" />
-    </inertial>
+        <parent link="parent_link_name" />
+        <child link="child_link_name" />
+        (optional) <axis xyz="1 0 0" />
+        (optional) <calibration (optional) rising="0" (optional) falling="0" />
+        (optional) <dynamics (optional) damping="0.1" (optional) friction="0.1" />
+        (required for revolute and prismatic) <limit (optional) lower="-1.57" (optional) upper="1.57" effort="10" velocity="1" />
+        (optional) <mimic joint="other_joint_name" (optional) multiplier="1.0" (optional) offset="0.0" />
+        (optional) <safety_controller (optional) soft_lower_limit="0" (optional) soft_upper_limit="0" (optional) k_position="0" k_velocity="0" />
 
-    (optional; multiple) <visual (optional) name="name">
-        (optional) <origin (optional) xyz="0 0 0" (optional) rpy="0 0 0" />
-        <geometry>
-            <box size="1 1 1" />
-            | <cylinder radius="1" length="1" />
-            | <sphere radius="1" />
-            | <mesh filename="path/to/mesh.dae" (optional) scale="1" />
-        </geometry>
-        (optional) <material (optional) name="name">
-            (optional) <color (range [0,1]) rgba="1 1 1 1" />
-            (optional) <texture filename="path/to/texture.png" />
-        </material>
-    </visual>
-
-    (optional; multiple) <collision (optional) name="name">
-        (optional) <origin (optional) xyz="0 0 0" (optional) rpy="0 0 0" />
-        <geometry>...</geometry>
-    </collision>
-
-</link>
+    </joint>
 ```
