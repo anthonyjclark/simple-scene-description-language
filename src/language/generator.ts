@@ -32,7 +32,8 @@ export function generate(robot: Robot): [string, Config] {
 	// TODO: remove robot.name from call to evaluateStatements?
 	const generatedNode = expandToNode`
 			<?xml version="1.0"?>
-			<robot name="${robot.name}">
+			<?xml-model href="https://raw.githubusercontent.com/ros/urdfdom/master/xsd/urdf.xsd" ?>
+			<robot name="${robot.name}" xmlns="http://www.ros.org">
 					${evaluateStatements(robot.statements, scope, robot.name)}
 			</robot>
 	`;
@@ -201,11 +202,11 @@ function evaluateShape(shape: Shape, name: string, mass: number, inertia: string
 							<mass value="${mass}" />
 							<inertia ${inertia} />
 					</inertial>
-					<visual name="${name}-visual">
+					<visual name="${name}_visual">
 							${origin}
 							<geometry>${geometry}</geometry>
 					</visual>
-					<collision name="${name}-collision">
+					<collision name="${name}_collision">
 							${origin}
 							<geometry>${geometry}</geometry>
 					</collision>
