@@ -83,7 +83,6 @@ macro Extension(parentWheel, x, y, z, pitch) {
         parent = parentWheel
         child = body
         position = x, y, z
-        rotation = 0, pitch, 0
         axis = 0, 1, 0
         lower = 0
         upper = pi
@@ -212,6 +211,7 @@ export const executeExtended = async (htmlElement: HTMLElement) => {
 
     const urdfDiv = document.getElementById("urdf-output");
     const urdfDownloadButton = document.getElementById("urdf-download");
+    const jointResetButton = document.getElementById("joint-reset");
 
     // TODO: only allow download if there is valid content
     urdfDownloadButton?.addEventListener('click', () => {
@@ -229,6 +229,22 @@ export const executeExtended = async (htmlElement: HTMLElement) => {
         URL.revokeObjectURL(url);
     });
 
+    jointResetButton?.addEventListener('click', () => {
+        if (robot === undefined) return;
+
+        Object.keys(robot.joints).map(key => robot.joints[key]).forEach((joint: any) => {
+            joint.setJointValue(0);
+        });
+
+        const jointSlidersList = document.getElementById("joint-sliders");
+        if (jointSlidersList) {
+            const rangeInputs = jointSlidersList.querySelectorAll<HTMLInputElement>('input[type="range"]');
+            rangeInputs.forEach(input => {
+                input.value = "0";
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+            });
+        }
+    });
 
     rendererInit();
     render();
@@ -298,13 +314,19 @@ export const executeExtended = async (htmlElement: HTMLElement) => {
             scene.add(textMesh);
         };
 
+
         const axisOffset = groundScale / 5 + 0.5;
+        // Account for the difference between three.js and URDF coordinate systems
+        // https://github.com/gkjohnson/urdf-loaders/blob/32431e5be62c92cc0c4ce5b254ade31dbe545766/javascript/src/urdf-viewer-element.js#L586
         createLabel('X', [axisOffset, 0, 0]);
-        createLabel('Y', [0, axisOffset, 0]);
-        createLabel('Z', [0, 0, axisOffset]);
+        createLabel('Y', [0, 0, -axisOffset]);
+        createLabel('Z', [0, axisOffset, 0]);
 
         const axisHelper = new AxesHelper(groundScale / 2);
         axisHelper.position.y = 0.001;
+        // Account for the difference between three.js and URDF coordinate systems
+        // https://github.com/gkjohnson/urdf-loaders/blob/32431e5be62c92cc0c4ce5b254ade31dbe545766/javascript/src/urdf-viewer-element.js#L586
+        axisHelper.rotateX(-Math.PI / 2);
         scene.add(axisHelper);
 
         const controls = new OrbitControls(camera, renderer.domElement);
@@ -353,6 +375,8 @@ export const executeExtended = async (htmlElement: HTMLElement) => {
             return;
         }
 
+        console.log(robot.frames)
+
         urdfDiv!.innerText = urdfString;
         // urdfDiv!.textContent = 'hello';
         // urdfDiv!.innerText = 'hello';
@@ -382,42 +406,29 @@ export const executeExtended = async (htmlElement: HTMLElement) => {
 
         Object.keys(robot.joints).map(key => robot.joints[key]).forEach((joint: any) => {
             const li = document.createElement("li");
-            // layout: label on left with fixed width, slider fills remaining space
-            li.style.display = "flex";
-            li.style.alignItems = "center";
-            li.style.marginBottom = "6px";
-
             const label = document.createElement("label");
-            label.textContent = joint.name;
-            label.style.display = "inline-block";
-            label.style.width = "140px"; // adjust as needed to align labels
-            label.style.textAlign = "right";
-            label.style.marginRight = "12px";
-            label.style.fontFamily = "inherit";
-
             const input = document.createElement("input");
+            li.appendChild(label);
+            li.appendChild(input);
+            jointSlidersList!.appendChild(li);
+
+            label.textContent = joint.name;
+
             input.type = "range";
             // TODO: consider fixed and continuous joints
             input.min = `${-Math.PI}`;
             input.max = `${Math.PI}`;
             input.step = "0.01";
             input.value = "0";
-            input.style.flex = "1";
-            input.style.cursor = "pointer";
-            input.style.marginLeft = "4px";
 
             input.addEventListener("input", () => {
-            const value = parseFloat(input.value);
-            joint.setJointValue(value);
+                const value = parseFloat(input.value);
+                joint.setJointValue(value);
             });
 
-            li.appendChild(label);
-            li.appendChild(input);
-            jointSlidersList!.appendChild(li);
         });
 
         scene.add(robot)
-
 
     }
 

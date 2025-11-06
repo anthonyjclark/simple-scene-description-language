@@ -82,7 +82,24 @@ a:visited {
   top: 0;
   right: 0;
   background-color: rgba(50, 50, 50, 0.6);
-  padding: 10px;
   border-radius: 5px;
-  font-size: 0.8rem;
+  font-size: 0.6rem;
+}
+
+#joint-sliders {
+  padding: 10px;
+  margin: 0;
+}
+
+#slider-container li {
+  display: flex;
+  align-items: center;
+}
+
+#slider-container li label {
+  width: 140px;
+}
+
+#slider-container li input {
+  cursor: pointer;
 }
