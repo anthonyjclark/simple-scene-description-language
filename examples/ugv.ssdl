@@ -1,6 +1,5 @@
 // https://github.com/anthonyjclark/adabot/blob/master/adabot_description/urdf/adabot.parameters.xacro
 
-
 //
 // Name and configuration
 //
@@ -20,15 +19,12 @@ let chassis_length = 10 cm
 let chassis_width = 16 cm
 let chassis_height = 4 cm
 
-// TODO: unused
-let chassis_mass = chassis_length * chassis_width * chassis_height * material_density
-
 let wheel_radius = 2.5 cm
 let wheel_thickness = 1 cm
 
-let extension_length = wheel_radius / 3
+let extension_length = wheel_radius
 let extension_width = wheel_thickness
-let extension_thickness = wheel_thickness
+let extension_thickness = wheel_thickness / 2
 
 let num_extensions = 3
 let extension_radial_offset = wheel_radius / 1.2
@@ -38,37 +34,52 @@ let extension_angle_offset = 20 deg
 // Macro definitions
 //
 
-macro Extension(parentWheel) {
+macro Extension(parentWheel, x, y, z, pitch) {
     body = Box {
-        size = extension_length, extension_width, extension_thickness
+        size = extension_length, extension_thickness, extension_width
     }
 
     joint = Revolute {
         parent = parentWheel
         child = body
+        position = x, y, z
+        axis = 0, 1, 0
+        lower = 0
+        upper = pi
+        effort = 10
+        velocity = 10
     }
 }
 
 macro Wheel(reflect_fr, reflect_lr) {
+
+    let x = chassis_length / 2 * reflect_fr
+    let y = (wheel_thickness + chassis_width) / 2 * reflect_lr
+    let z = 0
+
     body = Cylinder {
         length = wheel_thickness
         radius = wheel_radius
         rotation = pi/2, 0, 0
     }
 
-    joint = Revolute {
+    joint = Continuous {
         parent = chassis
         child = body
-        position =
-            chassis_length / 2 * reflect_fr,
-            (wheel_thickness + chassis_width) / 2 * reflect_lr,
-            0
+        position = x, y, z
         axis = 0, 1, 0
     }
 
+    for i in num_extensions {
+        let angle = 2 * pi * i / num_extensions
 
-    for i in 3 {
-        extension = Extension(body)
+        let xi = extension_radial_offset * cos(angle)
+        let yi = sign(reflect_lr) * (wheel_thickness + extension_thickness) / 2
+        let zi = extension_radial_offset * sin(angle)
+
+        let pitch = 90 deg - angle + extension_angle_offset
+
+        extension = Extension(body, xi, yi, zi, pitch)
     }
 }
 
@@ -78,6 +89,7 @@ macro Wheel(reflect_fr, reflect_lr) {
 
 chassis = Box {
     size = chassis_length, chassis_width, chassis_height
+    density = material_density
 }
 
 front_left_wheel = Wheel(1, -1)

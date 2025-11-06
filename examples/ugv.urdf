@@ -1,307 +1,328 @@
 <?xml version="1.0"?>
-<robot name="UGV">
-		<link name="UGV_chassis">
+<?xml-model href="https://raw.githubusercontent.com/ros/urdfdom/master/xsd/urdf.xsd" ?>
+<robot name="UGV" xmlns="http://www.ros.org">
+		<link name="chassis">
   		<inertial>
-  				<mass value="0.64" />
-  				<inertia ixx="0.001450666666666667" ixy="0" ixz="0" iyy="0.0006186666666666669" iyz="0" izz="0.0018986666666666672" />
+  				<mass value="0.6016" />
+  				<inertia ixx="0.001363626666666667" ixy="0" ixz="0" iyy="0.0005815466666666668" iyz="0" izz="0.001784746666666667" />
   		</inertial>
-  		<visual name="UGV_chassis-visual">
+  		<visual name="chassis_visual">
   				<geometry><box size="0.1 0.16 0.04" /></geometry>
   		</visual>
-  		<collision name="UGV_chassis-collision">
+  		<collision name="chassis_collision">
   				<geometry><box size="0.1 0.16 0.04" /></geometry>
   		</collision>
   </link>
-  <link name="UGV_front_left_wheel_body">
+  <link name="front_left_wheel_body">
   		<inertial>
   				<origin rpy="1.5707963267948966 0 0" />
   				<mass value="0.01963495408493621" />
   				<inertia ixx="0.000003231586193145752" ixy="0" ixz="0" iyy="0.000003231586193145752" iyz="0" izz="0.000006135923151542567" />
   		</inertial>
-  		<visual name="UGV_front_left_wheel_body-visual">
+  		<visual name="front_left_wheel_body_visual">
   				<origin rpy="1.5707963267948966 0 0" />
   				<geometry><cylinder radius="0.025" length="0.01" /></geometry>
   		</visual>
-  		<collision name="UGV_front_left_wheel_body-collision">
+  		<collision name="front_left_wheel_body_collision">
   				<origin rpy="1.5707963267948966 0 0" />
   				<geometry><cylinder radius="0.025" length="0.01" /></geometry>
   		</collision>
   </link>
-  <joint name="UGV_front_left_wheel_joint" type="revolute">
-  		<parent link="UGV_chassis" />
-  		<child link="UGV_front_left_wheel_body" />
+  <joint name="front_left_wheel_joint" type="continuous">
+  		<parent link="chassis" />
+  		<child link="front_left_wheel_body" />
   		<origin xyz="0.05 -0.085 0" />
   		<axis xyz="0 1 0" />
-  		<limit effort="0" velocity="0" />
   </joint>
-  <link name="UGV_front_left_wheel_0_extension_body">
+  <link name="front_left_wheel_0_extension_body">
   		<inertial>
-  				<mass value="0.0008333333333333333" />
-  				<inertia ixx="1.388888888888889e-8" ixy="0" ixz="0" iyy="1.1766975308641975e-8" iyz="0" izz="1.1766975308641975e-8" />
+  				<mass value="0.00125" />
+  				<inertia ixx="1.3020833333333335e-8" ixy="0" ixz="0" iyy="7.552083333333336e-8" iyz="0" izz="6.770833333333334e-8" />
   		</inertial>
-  		<visual name="UGV_front_left_wheel_0_extension_body-visual">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<visual name="front_left_wheel_0_extension_body_visual">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</visual>
-  		<collision name="UGV_front_left_wheel_0_extension_body-collision">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<collision name="front_left_wheel_0_extension_body_collision">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</collision>
   </link>
-  <joint name="UGV_front_left_wheel_0_extension_joint" type="revolute">
-  		<parent link="UGV_front_left_wheel_body" />
-  		<child link="UGV_front_left_wheel_0_extension_body" />
-  		<limit effort="0" velocity="0" />
+  <joint name="front_left_wheel_0_extension_joint" type="revolute">
+  		<parent link="front_left_wheel_body" />
+  		<child link="front_left_wheel_0_extension_body" />
+  		<origin xyz="0.020833333333333336 -0.0075 0" />
+  		<axis xyz="0 1 0" />
+  		<limit lower="0" upper="3.141592653589793" effort="10" velocity="10" />
   </joint>
-  <link name="UGV_front_left_wheel_1_extension_body">
+  <link name="front_left_wheel_1_extension_body">
   		<inertial>
-  				<mass value="0.0008333333333333333" />
-  				<inertia ixx="1.388888888888889e-8" ixy="0" ixz="0" iyy="1.1766975308641975e-8" iyz="0" izz="1.1766975308641975e-8" />
+  				<mass value="0.00125" />
+  				<inertia ixx="1.3020833333333335e-8" ixy="0" ixz="0" iyy="7.552083333333336e-8" iyz="0" izz="6.770833333333334e-8" />
   		</inertial>
-  		<visual name="UGV_front_left_wheel_1_extension_body-visual">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<visual name="front_left_wheel_1_extension_body_visual">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</visual>
-  		<collision name="UGV_front_left_wheel_1_extension_body-collision">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<collision name="front_left_wheel_1_extension_body_collision">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</collision>
   </link>
-  <joint name="UGV_front_left_wheel_1_extension_joint" type="revolute">
-  		<parent link="UGV_front_left_wheel_body" />
-  		<child link="UGV_front_left_wheel_1_extension_body" />
-  		<limit effort="0" velocity="0" />
+  <joint name="front_left_wheel_1_extension_joint" type="revolute">
+  		<parent link="front_left_wheel_body" />
+  		<child link="front_left_wheel_1_extension_body" />
+  		<origin xyz="-0.010416666666666663 -0.0075 0.018042195912175808" />
+  		<axis xyz="0 1 0" />
+  		<limit lower="0" upper="3.141592653589793" effort="10" velocity="10" />
   </joint>
-  <link name="UGV_front_left_wheel_2_extension_body">
+  <link name="front_left_wheel_2_extension_body">
   		<inertial>
-  				<mass value="0.0008333333333333333" />
-  				<inertia ixx="1.388888888888889e-8" ixy="0" ixz="0" iyy="1.1766975308641975e-8" iyz="0" izz="1.1766975308641975e-8" />
+  				<mass value="0.00125" />
+  				<inertia ixx="1.3020833333333335e-8" ixy="0" ixz="0" iyy="7.552083333333336e-8" iyz="0" izz="6.770833333333334e-8" />
   		</inertial>
-  		<visual name="UGV_front_left_wheel_2_extension_body-visual">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<visual name="front_left_wheel_2_extension_body_visual">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</visual>
-  		<collision name="UGV_front_left_wheel_2_extension_body-collision">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<collision name="front_left_wheel_2_extension_body_collision">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</collision>
   </link>
-  <joint name="UGV_front_left_wheel_2_extension_joint" type="revolute">
-  		<parent link="UGV_front_left_wheel_body" />
-  		<child link="UGV_front_left_wheel_2_extension_body" />
-  		<limit effort="0" velocity="0" />
+  <joint name="front_left_wheel_2_extension_joint" type="revolute">
+  		<parent link="front_left_wheel_body" />
+  		<child link="front_left_wheel_2_extension_body" />
+  		<origin xyz="-0.010416666666666676 -0.0075 -0.018042195912175804" />
+  		<axis xyz="0 1 0" />
+  		<limit lower="0" upper="3.141592653589793" effort="10" velocity="10" />
   </joint>
-  <link name="UGV_front_right_wheel_body">
+  <link name="front_right_wheel_body">
   		<inertial>
   				<origin rpy="1.5707963267948966 0 0" />
   				<mass value="0.01963495408493621" />
   				<inertia ixx="0.000003231586193145752" ixy="0" ixz="0" iyy="0.000003231586193145752" iyz="0" izz="0.000006135923151542567" />
   		</inertial>
-  		<visual name="UGV_front_right_wheel_body-visual">
+  		<visual name="front_right_wheel_body_visual">
   				<origin rpy="1.5707963267948966 0 0" />
   				<geometry><cylinder radius="0.025" length="0.01" /></geometry>
   		</visual>
-  		<collision name="UGV_front_right_wheel_body-collision">
+  		<collision name="front_right_wheel_body_collision">
   				<origin rpy="1.5707963267948966 0 0" />
   				<geometry><cylinder radius="0.025" length="0.01" /></geometry>
   		</collision>
   </link>
-  <joint name="UGV_front_right_wheel_joint" type="revolute">
-  		<parent link="UGV_chassis" />
-  		<child link="UGV_front_right_wheel_body" />
+  <joint name="front_right_wheel_joint" type="continuous">
+  		<parent link="chassis" />
+  		<child link="front_right_wheel_body" />
   		<origin xyz="0.05 0.085 0" />
   		<axis xyz="0 1 0" />
-  		<limit effort="0" velocity="0" />
   </joint>
-  <link name="UGV_front_right_wheel_0_extension_body">
+  <link name="front_right_wheel_0_extension_body">
   		<inertial>
-  				<mass value="0.0008333333333333333" />
-  				<inertia ixx="1.388888888888889e-8" ixy="0" ixz="0" iyy="1.1766975308641975e-8" iyz="0" izz="1.1766975308641975e-8" />
+  				<mass value="0.00125" />
+  				<inertia ixx="1.3020833333333335e-8" ixy="0" ixz="0" iyy="7.552083333333336e-8" iyz="0" izz="6.770833333333334e-8" />
   		</inertial>
-  		<visual name="UGV_front_right_wheel_0_extension_body-visual">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<visual name="front_right_wheel_0_extension_body_visual">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</visual>
-  		<collision name="UGV_front_right_wheel_0_extension_body-collision">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<collision name="front_right_wheel_0_extension_body_collision">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</collision>
   </link>
-  <joint name="UGV_front_right_wheel_0_extension_joint" type="revolute">
-  		<parent link="UGV_front_right_wheel_body" />
-  		<child link="UGV_front_right_wheel_0_extension_body" />
-  		<limit effort="0" velocity="0" />
+  <joint name="front_right_wheel_0_extension_joint" type="revolute">
+  		<parent link="front_right_wheel_body" />
+  		<child link="front_right_wheel_0_extension_body" />
+  		<origin xyz="0.020833333333333336 0.0075 0" />
+  		<axis xyz="0 1 0" />
+  		<limit lower="0" upper="3.141592653589793" effort="10" velocity="10" />
   </joint>
-  <link name="UGV_front_right_wheel_1_extension_body">
+  <link name="front_right_wheel_1_extension_body">
   		<inertial>
-  				<mass value="0.0008333333333333333" />
-  				<inertia ixx="1.388888888888889e-8" ixy="0" ixz="0" iyy="1.1766975308641975e-8" iyz="0" izz="1.1766975308641975e-8" />
+  				<mass value="0.00125" />
+  				<inertia ixx="1.3020833333333335e-8" ixy="0" ixz="0" iyy="7.552083333333336e-8" iyz="0" izz="6.770833333333334e-8" />
   		</inertial>
-  		<visual name="UGV_front_right_wheel_1_extension_body-visual">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<visual name="front_right_wheel_1_extension_body_visual">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</visual>
-  		<collision name="UGV_front_right_wheel_1_extension_body-collision">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<collision name="front_right_wheel_1_extension_body_collision">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</collision>
   </link>
-  <joint name="UGV_front_right_wheel_1_extension_joint" type="revolute">
-  		<parent link="UGV_front_right_wheel_body" />
-  		<child link="UGV_front_right_wheel_1_extension_body" />
-  		<limit effort="0" velocity="0" />
+  <joint name="front_right_wheel_1_extension_joint" type="revolute">
+  		<parent link="front_right_wheel_body" />
+  		<child link="front_right_wheel_1_extension_body" />
+  		<origin xyz="-0.010416666666666663 0.0075 0.018042195912175808" />
+  		<axis xyz="0 1 0" />
+  		<limit lower="0" upper="3.141592653589793" effort="10" velocity="10" />
   </joint>
-  <link name="UGV_front_right_wheel_2_extension_body">
+  <link name="front_right_wheel_2_extension_body">
   		<inertial>
-  				<mass value="0.0008333333333333333" />
-  				<inertia ixx="1.388888888888889e-8" ixy="0" ixz="0" iyy="1.1766975308641975e-8" iyz="0" izz="1.1766975308641975e-8" />
+  				<mass value="0.00125" />
+  				<inertia ixx="1.3020833333333335e-8" ixy="0" ixz="0" iyy="7.552083333333336e-8" iyz="0" izz="6.770833333333334e-8" />
   		</inertial>
-  		<visual name="UGV_front_right_wheel_2_extension_body-visual">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<visual name="front_right_wheel_2_extension_body_visual">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</visual>
-  		<collision name="UGV_front_right_wheel_2_extension_body-collision">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<collision name="front_right_wheel_2_extension_body_collision">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</collision>
   </link>
-  <joint name="UGV_front_right_wheel_2_extension_joint" type="revolute">
-  		<parent link="UGV_front_right_wheel_body" />
-  		<child link="UGV_front_right_wheel_2_extension_body" />
-  		<limit effort="0" velocity="0" />
+  <joint name="front_right_wheel_2_extension_joint" type="revolute">
+  		<parent link="front_right_wheel_body" />
+  		<child link="front_right_wheel_2_extension_body" />
+  		<origin xyz="-0.010416666666666676 0.0075 -0.018042195912175804" />
+  		<axis xyz="0 1 0" />
+  		<limit lower="0" upper="3.141592653589793" effort="10" velocity="10" />
   </joint>
-  <link name="UGV_rear_left_wheel_body">
+  <link name="rear_left_wheel_body">
   		<inertial>
   				<origin rpy="1.5707963267948966 0 0" />
   				<mass value="0.01963495408493621" />
   				<inertia ixx="0.000003231586193145752" ixy="0" ixz="0" iyy="0.000003231586193145752" iyz="0" izz="0.000006135923151542567" />
   		</inertial>
-  		<visual name="UGV_rear_left_wheel_body-visual">
+  		<visual name="rear_left_wheel_body_visual">
   				<origin rpy="1.5707963267948966 0 0" />
   				<geometry><cylinder radius="0.025" length="0.01" /></geometry>
   		</visual>
-  		<collision name="UGV_rear_left_wheel_body-collision">
+  		<collision name="rear_left_wheel_body_collision">
   				<origin rpy="1.5707963267948966 0 0" />
   				<geometry><cylinder radius="0.025" length="0.01" /></geometry>
   		</collision>
   </link>
-  <joint name="UGV_rear_left_wheel_joint" type="revolute">
-  		<parent link="UGV_chassis" />
-  		<child link="UGV_rear_left_wheel_body" />
+  <joint name="rear_left_wheel_joint" type="continuous">
+  		<parent link="chassis" />
+  		<child link="rear_left_wheel_body" />
   		<origin xyz="-0.05 -0.085 0" />
   		<axis xyz="0 1 0" />
-  		<limit effort="0" velocity="0" />
   </joint>
-  <link name="UGV_rear_left_wheel_0_extension_body">
+  <link name="rear_left_wheel_0_extension_body">
   		<inertial>
-  				<mass value="0.0008333333333333333" />
-  				<inertia ixx="1.388888888888889e-8" ixy="0" ixz="0" iyy="1.1766975308641975e-8" iyz="0" izz="1.1766975308641975e-8" />
+  				<mass value="0.00125" />
+  				<inertia ixx="1.3020833333333335e-8" ixy="0" ixz="0" iyy="7.552083333333336e-8" iyz="0" izz="6.770833333333334e-8" />
   		</inertial>
-  		<visual name="UGV_rear_left_wheel_0_extension_body-visual">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<visual name="rear_left_wheel_0_extension_body_visual">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</visual>
-  		<collision name="UGV_rear_left_wheel_0_extension_body-collision">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<collision name="rear_left_wheel_0_extension_body_collision">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</collision>
   </link>
-  <joint name="UGV_rear_left_wheel_0_extension_joint" type="revolute">
-  		<parent link="UGV_rear_left_wheel_body" />
-  		<child link="UGV_rear_left_wheel_0_extension_body" />
-  		<limit effort="0" velocity="0" />
+  <joint name="rear_left_wheel_0_extension_joint" type="revolute">
+  		<parent link="rear_left_wheel_body" />
+  		<child link="rear_left_wheel_0_extension_body" />
+  		<origin xyz="0.020833333333333336 -0.0075 0" />
+  		<axis xyz="0 1 0" />
+  		<limit lower="0" upper="3.141592653589793" effort="10" velocity="10" />
   </joint>
-  <link name="UGV_rear_left_wheel_1_extension_body">
+  <link name="rear_left_wheel_1_extension_body">
   		<inertial>
-  				<mass value="0.0008333333333333333" />
-  				<inertia ixx="1.388888888888889e-8" ixy="0" ixz="0" iyy="1.1766975308641975e-8" iyz="0" izz="1.1766975308641975e-8" />
+  				<mass value="0.00125" />
+  				<inertia ixx="1.3020833333333335e-8" ixy="0" ixz="0" iyy="7.552083333333336e-8" iyz="0" izz="6.770833333333334e-8" />
   		</inertial>
-  		<visual name="UGV_rear_left_wheel_1_extension_body-visual">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<visual name="rear_left_wheel_1_extension_body_visual">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</visual>
-  		<collision name="UGV_rear_left_wheel_1_extension_body-collision">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<collision name="rear_left_wheel_1_extension_body_collision">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</collision>
   </link>
-  <joint name="UGV_rear_left_wheel_1_extension_joint" type="revolute">
-  		<parent link="UGV_rear_left_wheel_body" />
-  		<child link="UGV_rear_left_wheel_1_extension_body" />
-  		<limit effort="0" velocity="0" />
+  <joint name="rear_left_wheel_1_extension_joint" type="revolute">
+  		<parent link="rear_left_wheel_body" />
+  		<child link="rear_left_wheel_1_extension_body" />
+  		<origin xyz="-0.010416666666666663 -0.0075 0.018042195912175808" />
+  		<axis xyz="0 1 0" />
+  		<limit lower="0" upper="3.141592653589793" effort="10" velocity="10" />
   </joint>
-  <link name="UGV_rear_left_wheel_2_extension_body">
+  <link name="rear_left_wheel_2_extension_body">
   		<inertial>
-  				<mass value="0.0008333333333333333" />
-  				<inertia ixx="1.388888888888889e-8" ixy="0" ixz="0" iyy="1.1766975308641975e-8" iyz="0" izz="1.1766975308641975e-8" />
+  				<mass value="0.00125" />
+  				<inertia ixx="1.3020833333333335e-8" ixy="0" ixz="0" iyy="7.552083333333336e-8" iyz="0" izz="6.770833333333334e-8" />
   		</inertial>
-  		<visual name="UGV_rear_left_wheel_2_extension_body-visual">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<visual name="rear_left_wheel_2_extension_body_visual">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</visual>
-  		<collision name="UGV_rear_left_wheel_2_extension_body-collision">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<collision name="rear_left_wheel_2_extension_body_collision">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</collision>
   </link>
-  <joint name="UGV_rear_left_wheel_2_extension_joint" type="revolute">
-  		<parent link="UGV_rear_left_wheel_body" />
-  		<child link="UGV_rear_left_wheel_2_extension_body" />
-  		<limit effort="0" velocity="0" />
+  <joint name="rear_left_wheel_2_extension_joint" type="revolute">
+  		<parent link="rear_left_wheel_body" />
+  		<child link="rear_left_wheel_2_extension_body" />
+  		<origin xyz="-0.010416666666666676 -0.0075 -0.018042195912175804" />
+  		<axis xyz="0 1 0" />
+  		<limit lower="0" upper="3.141592653589793" effort="10" velocity="10" />
   </joint>
-  <link name="UGV_rear_right_wheel_body">
+  <link name="rear_right_wheel_body">
   		<inertial>
   				<origin rpy="1.5707963267948966 0 0" />
   				<mass value="0.01963495408493621" />
   				<inertia ixx="0.000003231586193145752" ixy="0" ixz="0" iyy="0.000003231586193145752" iyz="0" izz="0.000006135923151542567" />
   		</inertial>
-  		<visual name="UGV_rear_right_wheel_body-visual">
+  		<visual name="rear_right_wheel_body_visual">
   				<origin rpy="1.5707963267948966 0 0" />
   				<geometry><cylinder radius="0.025" length="0.01" /></geometry>
   		</visual>
-  		<collision name="UGV_rear_right_wheel_body-collision">
+  		<collision name="rear_right_wheel_body_collision">
   				<origin rpy="1.5707963267948966 0 0" />
   				<geometry><cylinder radius="0.025" length="0.01" /></geometry>
   		</collision>
   </link>
-  <joint name="UGV_rear_right_wheel_joint" type="revolute">
-  		<parent link="UGV_chassis" />
-  		<child link="UGV_rear_right_wheel_body" />
+  <joint name="rear_right_wheel_joint" type="continuous">
+  		<parent link="chassis" />
+  		<child link="rear_right_wheel_body" />
   		<origin xyz="-0.05 0.085 0" />
   		<axis xyz="0 1 0" />
-  		<limit effort="0" velocity="0" />
   </joint>
-  <link name="UGV_rear_right_wheel_0_extension_body">
+  <link name="rear_right_wheel_0_extension_body">
   		<inertial>
-  				<mass value="0.0008333333333333333" />
-  				<inertia ixx="1.388888888888889e-8" ixy="0" ixz="0" iyy="1.1766975308641975e-8" iyz="0" izz="1.1766975308641975e-8" />
+  				<mass value="0.00125" />
+  				<inertia ixx="1.3020833333333335e-8" ixy="0" ixz="0" iyy="7.552083333333336e-8" iyz="0" izz="6.770833333333334e-8" />
   		</inertial>
-  		<visual name="UGV_rear_right_wheel_0_extension_body-visual">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<visual name="rear_right_wheel_0_extension_body_visual">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</visual>
-  		<collision name="UGV_rear_right_wheel_0_extension_body-collision">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<collision name="rear_right_wheel_0_extension_body_collision">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</collision>
   </link>
-  <joint name="UGV_rear_right_wheel_0_extension_joint" type="revolute">
-  		<parent link="UGV_rear_right_wheel_body" />
-  		<child link="UGV_rear_right_wheel_0_extension_body" />
-  		<limit effort="0" velocity="0" />
+  <joint name="rear_right_wheel_0_extension_joint" type="revolute">
+  		<parent link="rear_right_wheel_body" />
+  		<child link="rear_right_wheel_0_extension_body" />
+  		<origin xyz="0.020833333333333336 0.0075 0" />
+  		<axis xyz="0 1 0" />
+  		<limit lower="0" upper="3.141592653589793" effort="10" velocity="10" />
   </joint>
-  <link name="UGV_rear_right_wheel_1_extension_body">
+  <link name="rear_right_wheel_1_extension_body">
   		<inertial>
-  				<mass value="0.0008333333333333333" />
-  				<inertia ixx="1.388888888888889e-8" ixy="0" ixz="0" iyy="1.1766975308641975e-8" iyz="0" izz="1.1766975308641975e-8" />
+  				<mass value="0.00125" />
+  				<inertia ixx="1.3020833333333335e-8" ixy="0" ixz="0" iyy="7.552083333333336e-8" iyz="0" izz="6.770833333333334e-8" />
   		</inertial>
-  		<visual name="UGV_rear_right_wheel_1_extension_body-visual">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<visual name="rear_right_wheel_1_extension_body_visual">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</visual>
-  		<collision name="UGV_rear_right_wheel_1_extension_body-collision">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<collision name="rear_right_wheel_1_extension_body_collision">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</collision>
   </link>
-  <joint name="UGV_rear_right_wheel_1_extension_joint" type="revolute">
-  		<parent link="UGV_rear_right_wheel_body" />
-  		<child link="UGV_rear_right_wheel_1_extension_body" />
-  		<limit effort="0" velocity="0" />
+  <joint name="rear_right_wheel_1_extension_joint" type="revolute">
+  		<parent link="rear_right_wheel_body" />
+  		<child link="rear_right_wheel_1_extension_body" />
+  		<origin xyz="-0.010416666666666663 0.0075 0.018042195912175808" />
+  		<axis xyz="0 1 0" />
+  		<limit lower="0" upper="3.141592653589793" effort="10" velocity="10" />
   </joint>
-  <link name="UGV_rear_right_wheel_2_extension_body">
+  <link name="rear_right_wheel_2_extension_body">
   		<inertial>
-  				<mass value="0.0008333333333333333" />
-  				<inertia ixx="1.388888888888889e-8" ixy="0" ixz="0" iyy="1.1766975308641975e-8" iyz="0" izz="1.1766975308641975e-8" />
+  				<mass value="0.00125" />
+  				<inertia ixx="1.3020833333333335e-8" ixy="0" ixz="0" iyy="7.552083333333336e-8" iyz="0" izz="6.770833333333334e-8" />
   		</inertial>
-  		<visual name="UGV_rear_right_wheel_2_extension_body-visual">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<visual name="rear_right_wheel_2_extension_body_visual">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</visual>
-  		<collision name="UGV_rear_right_wheel_2_extension_body-collision">
-  				<geometry><box size="0.008333333333333333 0.01 0.01" /></geometry>
+  		<collision name="rear_right_wheel_2_extension_body_collision">
+  				<geometry><box size="0.025 0.005 0.01" /></geometry>
   		</collision>
   </link>
-  <joint name="UGV_rear_right_wheel_2_extension_joint" type="revolute">
-  		<parent link="UGV_rear_right_wheel_body" />
-  		<child link="UGV_rear_right_wheel_2_extension_body" />
-  		<limit effort="0" velocity="0" />
+  <joint name="rear_right_wheel_2_extension_joint" type="revolute">
+  		<parent link="rear_right_wheel_body" />
+  		<child link="rear_right_wheel_2_extension_body" />
+  		<origin xyz="-0.010416666666666676 0.0075 -0.018042195912175804" />
+  		<axis xyz="0 1 0" />
+  		<limit lower="0" upper="3.141592653589793" effort="10" velocity="10" />
   </joint>
 </robot>
