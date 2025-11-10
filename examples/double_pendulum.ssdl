@@ -1,0 +1,59 @@
+name DoublePendulum
+
+let base_side = 0.5
+let base_thickness = 0.1
+let base_volume = base_side * base_side * base_thickness
+let base_mass = 0.5
+
+// Create vector and color objects...
+// let v = Vector(x, y, z)
+// let c = Color(r, g, b, a)
+
+base = Box {
+    size = base_side, base_side, base_thickness
+    // Allow to specify mass or density
+    density = base_mass / base_volume
+    color = 0.1, 0.1, 0.1, 1
+}
+
+let bar_length = 1
+let bar_radius = 0.05
+// pi has units of radians...
+// Add functions for computing volumes
+let bar_volume = 3.14 * bar_radius * bar_radius * bar_length
+let bar_mass = 0.5
+
+// supress collision or visual
+
+// maybe call position frameOffset?
+
+upper_bar = Cylinder {
+    length = bar_length
+    radius = bar_radius
+    position = 0, 0, -0.5
+    density = bar_mass / bar_volume
+    color = 0.3, 0.3, 0.3, 1
+}
+
+lower_bar = Cylinder {
+    length = bar_length
+    radius = bar_radius
+    position = 0, 0, -0.5
+    density = bar_mass / bar_volume
+    color = 0.5, 0.5, 0.5, 1
+}
+
+base_upper_joint = Continuous {
+    parent = base
+    child = upper_bar
+    position = 0, 0, -0.05
+    axis = 0, 1, 0
+}
+
+upper_lower_joint = Continuous {
+    parent = upper_bar
+    child = lower_bar
+    position = 0, 0, -1
+    axis = 0, 1, 0
+    // damping = 0.002
+}
