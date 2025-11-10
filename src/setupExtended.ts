@@ -77,6 +77,7 @@ let extension_angle_offset = 20 deg
 macro Extension(parentWheel, x, y, z, pitch) {
     body = Box {
         size = extension_length, extension_thickness, extension_width
+        color = 1, 0, 0, 1
     }
 
     joint = Revolute {

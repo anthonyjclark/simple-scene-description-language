@@ -187,7 +187,7 @@ Vector3:
     a=Expression ',' b=Expression ',' c=Expression;
 
 RGBA:
-    r=Expression ',' c=Expression ',' b=Expression ',' a=Expression;
+    r=Expression ',' g=Expression ',' b=Expression ',' a=Expression;
 
 // A good resource for units: https://numbat.dev/doc/list-units.html
 Units returns string:

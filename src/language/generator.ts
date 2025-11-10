@@ -1,7 +1,7 @@
 // TODO: type check things like mass
 
 import type { Robot, Configurations, Definition, Statement } from "./generated/ast.js";
-import type { Expression, Vector3 } from "./generated/ast.js";
+import type { Expression, RGBA, Vector3 } from "./generated/ast.js";
 import type { Box, Cylinder } from "./generated/ast.js";
 import type { Continuous, Revolute } from "./generated/ast.js";
 
@@ -20,6 +20,7 @@ type Scope = Map<string, string | Unit | number>;
 type Config = Map<string, number | boolean>;
 type Shape = Box | Cylinder;
 type Triple = [number, number, number];
+type Color = [number, number, number, number];
 
 export function generate(robot: Robot): [string, Config] {
 
@@ -199,9 +200,22 @@ function evaluateShape(shape: Shape, name: string, mass: number, inertia: string
 
 	// const origin = createOriginElement(shape.position, shape.rotation, scope);
 
-	// TODO: visual -> material
+	// TODO: visual -> material texture
 	// TODO: handle optional inertial, visual, and collision elements
 	// TODO: handle multiple visual and collision elements
+	// TODO: check range for color values (0.0 to 1.0)
+
+	let material = undefined;
+	if (shape.color) {
+		const [r, g, b, a] = evaluateRGBA(shape.color, scope, '');
+		material = expandToNode`
+			<material name="${name}_material">
+				<color rgba="${r} ${g} ${b} ${a}" />
+			</material>
+		`;
+	}
+
+
 
 	return expandToNode`
 			<link name="${name}">
@@ -211,6 +225,7 @@ function evaluateShape(shape: Shape, name: string, mass: number, inertia: string
 					</inertial>
 					<visual name="${name}_visual">
 							<geometry>${geometry}</geometry>
+							${material}
 					</visual>
 					<collision name="${name}_collision">
 							<geometry>${geometry}</geometry>
@@ -394,6 +409,16 @@ function evaluateVector3(v3: Vector3, scope: Scope, units?: string): Triple {
 	const c = evaluateExpressionAsNumber(v3.c, scope, units);
 
 	return [a, b, c];
+}
+
+function evaluateRGBA(v3: RGBA, scope: Scope, units?: string): Color {
+
+	const r = evaluateExpressionAsNumber(v3.r, scope, units);
+	const g = evaluateExpressionAsNumber(v3.g, scope, units);
+	const b = evaluateExpressionAsNumber(v3.b, scope, units);
+	const a = evaluateExpressionAsNumber(v3.a, scope, units);
+
+	return [r, g, b, a];
 }
 
 function vector3ToString(v3: Vector3, scope: Scope, units?: string): string {
