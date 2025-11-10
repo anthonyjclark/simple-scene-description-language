@@ -63,7 +63,7 @@ let wheel_radius = 2.5 cm
 let wheel_thickness = 1 cm
 
 let extension_length = wheel_radius
-let extension_width = wheel_thickness
+let extension_width = wheel_thickness / 2
 let extension_thickness = wheel_thickness / 2
 
 let num_extensions = 3
@@ -84,6 +84,7 @@ macro Extension(parentWheel, x, y, z, pitch) {
         parent = parentWheel
         child = body
         position = x, y, z
+        rotation = 0, pitch, 0
         axis = 0, 1, 0
         lower = 0
         upper = pi

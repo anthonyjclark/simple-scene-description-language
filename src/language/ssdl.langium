@@ -6,7 +6,8 @@ entry Robot:
     'name' name=ID (configurations+=Configurations)* (definitions+=Definition | statements+=Statement)*;
 
 // TODO:
-// - default units?
+// - set default units?
+// - continuous vs fixed sliders for joints? (similar to urdf-loaders examples)
 Configurations:
     'set' ( name='visual_scale'   '=' value=NUMBER
           | name='snap_to_ground' '=' value=('true' | 'false'));
@@ -63,6 +64,9 @@ Statement:
 Body:
     name=ID '=' shape=(Box | Cylinder | Sphere);
 
+// TODO: multi-body (multiple visuals and/or collisions per link/body)
+// MultiBody: ...
+
 // TODO: add a flag to disable?: noVisual=true, --no-visual
 // TODO: visual -> geometry -> mesh
 // TODO: visual -> material -> texture
@@ -77,6 +81,7 @@ fragment BodyAttributes:
     ('position' '=' position=Vector3)?
     ('rotation' '=' rotation=Vector3)?
     ('density' '=' density=Expression)?
+    // TODO: maybe inertia should only be computed automatically from shape and density
     ('ixx' '=' ixx=Expression)? // TODO: currently ignored
     ('ixy' '=' ixy=Expression)? // TODO: currently ignored
     ('ixz' '=' ixz=Expression)? // TODO: currently ignored
@@ -106,7 +111,10 @@ Sphere:
     '}';
 
 
-// TODO: look at the URDF specification
+// TODO: calibration (rising and falling)
+// TODO: dynamics (damping and friction)
+// TODO: mimic (name, multiplier, offset)
+// TODO: safety_controller (soft_lower_limit, soft_upper_limit, k_position, k_velocity)
 Joint:
     name=ID '=' jtype=(Revolute | Continuous | Prismatic | Fixed);
 
@@ -115,9 +123,7 @@ fragment JointAttributes:
     ('child' '=' child=ID)
     ('position' '=' position=Vector3)?
     ('rotation' '=' rotation=Vector3)?
-    ('axis' '=' axis=Vector3)?
-    ('maxEffort' '=' maxEffort=Expression)?
-    ('maxVelocity' '=' maxVelocity=Expression)?;
+    ('axis' '=' axis=Vector3)?;
 
 Revolute:
     'Revolute' '{'
@@ -131,6 +137,10 @@ Revolute:
 Continuous:
     'Continuous' '{'
         JointAttributes
+        ('lower' '=' lower=Expression)?
+        ('upper' '=' upper=Expression)?
+        ('effort' '=' effort=Expression)?
+        ('velocity' '=' velocity=Expression)?
     '}';
 
 Prismatic:

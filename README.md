@@ -2,6 +2,26 @@
 
 ## TODO
 
+- 2025-11-10
+  - load ssdl files from URL (instead of embedding in `setupExtended.ts`)
+
+- working on (2025-10-30):
+  - [urdf-loaders documentation](https://gkjohnson.github.io/urdf-loaders/javascript/)
+    - `URDFOptions`
+      - `.parseVisual = true`
+      - `.parseCollision = false`
+    - `URDFJoint.mimicJoints: URDFMimicJoints[]`
+    - `URDFRobot` (extends `URDFLink`)
+      - `.links: map/set of...`
+      - `.joints: map/set of...`
+      - `.colliders: map/set of...`
+      - `.visual: map/set of...`
+      - `.frames: map/set of...`
+  - default rotation for cylinder seems wrong
+  - visualize frames
+  - warn on unused parameters in SSDL
+  - validate input range for colors (and others?)
+
 - working on:
   - names inside scopes (e.g., joint a link names need to automatically get their parent name)
   - previously, this was handled manually using `self.`
@@ -27,7 +47,7 @@
 - documentation?
 - add light and dark modes (both text and visualization)
 - setup formatting
-- visualize joints
+- visualize joints, CoMs, axes, collisions, etc. (look at rviz and Gazebo and mujoco)
 
 - Recreate the tutorial: [Building a Visual Robot Model with URDF from Scratch](https://wiki.ros.org/urdf/Tutorials/Building%20a%20Visual%20Robot%20Model%20with%20URDF%20from%20Scratch)
 
@@ -132,14 +152,20 @@ magick ssdl-logo.png -background transparent -define icon:auto-resize=256,128,64
 
 ### Coordinate Systems
 
-| axis | three.js        | RotX  | ROS (body) | ROS (geo) | ROS (rpy) |
-| ---- | --------------- | ----- | ---------- | --------- | --------- |
-| x    | right   (red)   | right | forward    | east      | roll      |
-| y    | up      (green) |       | left       | north     | pitch     |
-| z    | forward (blue)  |       | up         | up        | yaw       |
+| axis   | three.js        | RotX  | ROS (body) | ROS (geo) | ROS (rpy) | URDF  |
+| ------ | --------------- | ----- | ---------- | --------- | --------- | ----- |
+| handed | right           |       | right      | right     | right     | right |
+| x      | right   (red)   | right | forward    | east      | roll      | into  |
+| y      | up      (green) |       | left       | north     | pitch     | left  |
+| z      | forward (blue)  |       | up         | up        | yaw       | up    |
 
+- [Standard Units of Measure and Coordinate Conventions](https://www.ros.org/reps/rep-0103.html)
 - [three.js](https://discoverthreejs.com/book/first-steps/transformations/#coordinate-systems-world-space-and-local-space)
-- [ROS](https://www.ros.org/reps/rep-0103.html#id19)
+- [URDFLoader.js](https://github.com/gkjohnson/urdf-loaders/blob/master/javascript/src/URDFLoader.js)
+
+urdf-loaders
+
+- "rotation direction is determined using the right-hand-rule as dictated by the URDF specification and ROS coordinate system."
 
 ### Link Reference
 
@@ -156,7 +182,13 @@ A note on origins:
   - child links are positioned at the joint origin
   - joint origins are relative to the parent link frame (recursively)
   - rule of thumb: use a joint to position a child link relative to its parent link; use the child links origin to rotate
-- visualize/debug with `gz sim
+- visualize/debug with [urdf-viz](https://github.com/openrr/urdf-viz)
+  - collision mode or visual mode
+  - r for random joint positions
+  - z to reset
+
+- need to figure out:
+  - how does origin affect inertia calculation?
 
 ```xml
 <?xml version="1.0"?>

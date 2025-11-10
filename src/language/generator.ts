@@ -198,7 +198,7 @@ function evaluateStatement(statement: Statement, scope: Scope, context: string):
 function evaluateShape(shape: Shape, name: string, mass: number, inertia: string, geometry: string, scope: Scope): Generated {
 	// By default this will create a shape with inertial, visual, and collision elements
 
-	// const origin = createOriginElement(shape.position, shape.rotation, scope);
+	const origin = createOriginElement(shape.position, shape.rotation, scope);
 
 	// TODO: visual -> material texture
 	// TODO: handle optional inertial, visual, and collision elements
@@ -220,14 +220,17 @@ function evaluateShape(shape: Shape, name: string, mass: number, inertia: string
 	return expandToNode`
 			<link name="${name}">
 					<inertial>
+							${origin}
 							<mass value="${mass}" />
 							<inertia ${inertia} />
 					</inertial>
 					<visual name="${name}_visual">
+							${origin}
 							<geometry>${geometry}</geometry>
 							${material}
 					</visual>
 					<collision name="${name}_collision">
+							${origin}
 							<geometry>${geometry}</geometry>
 					</collision>
 			</link>`;
@@ -442,14 +445,14 @@ function createOriginElement(position: Vector3 | undefined, rotation: Vector3 | 
 
 function limitsToString(revolute: Revolute, scope: Scope): Generated {
 
-	const maxEffort = revolute.effort ? evaluateExpressionAsNumber(revolute.effort, scope, 'N m') : 0;
-	const maxVelocity = revolute.velocity ? evaluateExpressionAsNumber(revolute.velocity, scope, 'm/s') : 0;
+	const effort = revolute.effort ? evaluateExpressionAsNumber(revolute.effort, scope, 'N m') : 0;
+	const velocity = revolute.velocity ? evaluateExpressionAsNumber(revolute.velocity, scope, 'm/s') : 0;
 
 	const lowerString = revolute.lower ? `lower="${evaluateExpressionAsNumber(revolute.lower, scope, 'rad')}" ` : "";
 	const upperString = revolute.upper ? `upper="${evaluateExpressionAsNumber(revolute.upper, scope, 'rad')}" ` : "";
 
 	// We don't want a limit element if no limits are specified
-	return expandToNode`<limit ${lowerString}${upperString}effort="${maxEffort}" velocity="${maxVelocity}" />`;
+	return expandToNode`<limit ${lowerString}${upperString}effort="${effort}" velocity="${velocity}" />`;
 
 }
 
